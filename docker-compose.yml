@@ -22,4 +22,3 @@ services:
         restart: unless-stopped
         ports:
             - 8545:8545
-        command: "-a 1 --defaultBalanceEther 1000000000 --debug"

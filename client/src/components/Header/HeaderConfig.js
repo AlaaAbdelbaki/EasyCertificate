@@ -25,7 +25,8 @@ function HeaderConfig(props) {
     const userLink = () => {
         return <li className="drop-nav">
             <Link to="#" className="avatar">
-            <img src={`http://localhost:3000/img/profilePictures/${user.profilePicture}`} alt=""/> {user.name} <i className="fas fa-angle-down"></i>
+               
+            {user.accounttype !=="Email" ? <img src={`${user.profilePicture}`} alt=""/>  : <img src={`http://localhost:3000/img/profilePictures/${user.profilePicture}`} alt=""/>  } {user.name} <i className="fas fa-angle-down"></i>
             </Link>
             <ul className="dropdown">
                 <li><Link to={`/profile/${user.profileId}`}> <i className="far fa-id-badge"></i> Profile</Link></li>

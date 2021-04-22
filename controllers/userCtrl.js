@@ -50,12 +50,12 @@ const userCtrl = {
             const user =  jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET)
  
             const {name, email, password,profileId} = user
-
+            const accounttype = "Email";
             const check =  await Users.findOne({email})
             if(check) return res.status(400).json({msg:"this email already exists."})
             
             const newUser = new Users({
-                name, email, password,profileId
+                name, email, password,profileId,accounttype
             })
             await newUser.save()
 
@@ -70,8 +70,18 @@ const userCtrl = {
            const user = await Users.findOne({email})
            if(!user) return res.status(400).json({msg:"This mail does not exist."})
 
+           let isEmail = false;
+
+           if(user.accounttype=="Email"){
+               isEmail=true;
+           }
+
+           if(isEmail==false) return res.status(400).json({msg:"Please Login with "+user.accounttype});
+
            const isMatch = await bcrypt.compare(password, user.password)
            if(!isMatch) return res.status(400).json({msg:"Password is incorrect."})
+
+           
            
            
            const refresh_token = createRefreshToken({id: user._id})
@@ -159,13 +169,21 @@ const userCtrl = {
         }
     },
     updateUser: async (req,res) => {
+        console.log(req.body)
         try {
-            const {name, avatar} = req.body
-            await Users.findOneAndUpdate({_id: req.user.id}, {
-                name , avatar
+            const {email, profileId,role} = req.body
+            Users.findById(req.body.id).then(user=>{
+                user.email = email,
+                user.profileId=profileId,
+                user.role=role
+                user.save().then(
+                    res.json({msg: "Update Success!"})
+                )
             })
+            // Users.findOneAndUpdate({_id: req.params.id}, {
+            //     email,profileId,role
+            // })
             
-            res.json({msg: "Update Success!"})
         } catch (err) {
             return res.status(500).json({msg: err.message})
         }
@@ -208,10 +226,20 @@ const userCtrl = {
             const user = await Users.findOne({email})
 
             const username =  email.substr(0,email.indexOf("@"))
+            let isEmail = false;
 
             if(user){
+               
+
+                if(user.accounttype=="Email"){
+                    isEmail=true;
+                }
+
+                if(isEmail==true) return res.status(400).json({msg:"Please Login with "+user.accounttype});
+                
                 const isMatch = await bcrypt.compare(password, user.password)
                 if(!isMatch) return res.status(400).json({msg: "Password is incorrect."})
+                   
 
                 const refresh_token = createRefreshToken({id: user._id})
                 res.cookie('refreshtoken', refresh_token, {
@@ -223,7 +251,7 @@ const userCtrl = {
                 res.json({msg: "Login success!"})
             }else{
                 const newUser = new Users({
-                    name, email, password: passwordHash, profilePicture: picture,profileId:username
+                    name, email, password: passwordHash, profilePicture: picture,profileId:username,accounttype:"Google"
                 })
 
                 await newUser.save()
@@ -262,8 +290,18 @@ const userCtrl = {
             const username =  email.substr(0,email.indexOf("@"))
 
             if(user){
+                let isEmail = false;
+
+                if(user.accounttype=="Email"){
+                    isEmail=true;
+                }
+    
+                if(isEmail==true) return res.status(400).json({msg:"Please Login with "+user.accounttype});
+
                 const isMatch = await bcrypt.compare(password, user.password)
                 if(!isMatch) return res.status(400).json({msg: "Password is incorrect."})
+                
+             
 
                 const refresh_token = createRefreshToken({id: user._id})
                 res.cookie('refreshtoken', refresh_token, {
@@ -275,7 +313,7 @@ const userCtrl = {
                 res.json({msg: "Login success!"})
             }else{
                 const newUser = new Users({
-                    name, email, password: passwordHash, profilePicture: picture.data.url,profileId:username
+                    name, email, password: passwordHash, profilePicture: picture.data.url,profileId:username,accounttype:"Facebook"
                 })
 
                 await newUser.save()

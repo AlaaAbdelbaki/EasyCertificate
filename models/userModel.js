@@ -61,6 +61,10 @@ const userSchema =  new  mongoose.Schema({
         type:String,
         required:false
     },
+    accounttype:{
+        type:String,
+        required:true
+    },
 
 
 }, {

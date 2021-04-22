@@ -39,12 +39,18 @@ export default class UserCard extends Component {
                     <center>
                         <div className="author">
                             
-                            <img
+                            {this.props.profile.accounttype !=="Email" ? <img
                                 alt="..."
                                 className="avatar border-gray profile-img"
-                                // src={require("assets/img/henlo.png")}
-                                src={`http://localhost:3000/img/profilePictures/${this.props.profile.profilePicture}`}
-                            /><br/><br/>
+                                src={`${this.props.profile.profilePicture}`}/> :
+                                <img
+                                alt="..."
+                                className="avatar border-gray profile-img"
+                                src={`http://localhost:3000/img/profilePictures/${this.props.profile.profilePicture}`}/>}
+                          
+                                
+                                
+                                <br/><br/>
                             <h5 className="title"><Link to={`/profile/${this.props.profile.profileId}`}>{this.props.profile.name}</Link></h5>
                            
 

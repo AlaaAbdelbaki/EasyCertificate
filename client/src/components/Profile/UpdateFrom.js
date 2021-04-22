@@ -104,9 +104,9 @@ class UpdateFrom extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="pr-1" md="6">
+                        <Col className="pr-1" md="12">
                             <FormGroup>
-                                <label>First Name</label>
+                                <label>Name</label>
                                 <Input
                                     defaultValue={this.state.name}
                                     placeholder="Company"
@@ -120,22 +120,7 @@ class UpdateFrom extends Component {
                                 />
                             </FormGroup>
                         </Col>
-                        <Col className="pl-1" md="6">
-                            <FormGroup>
-                                <label>Last Name</label>
-                                <Input
-                                    defaultValue={this.state.lastName}
-                                    placeholder="Last Name"
-                                    type="text"
-                                    onChange={event => {
-                                        this.setState({
-                                            lastName: event.target.value,
-                                        });
-                                        // console.log("changed");
-                                    }}
-                                />
-                            </FormGroup>
-                        </Col>
+                       
                     </Row>
                     <Row>
                         <Col md="12">

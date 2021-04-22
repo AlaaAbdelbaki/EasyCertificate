@@ -28,14 +28,13 @@ export default class UpdateCertificate extends Component {
         redirect:false,
         txnHash: 0,
         blockWitnessed: 0,
-        userid:''
     }
 
     componentDidMount =  async () => {
+        console.log(this.props)
         this.setState({hash: this.props.location.state.params.id})
-        console.log(this.state.hash)
         let data = await loadBlockchainData();
-          this.setState({ account: (await data).accounts[0],web3: (await data).web3,contract: (await data).instance,userid:this.props.user._id });
+          this.setState({ account: (await data).accounts[0],web3: (await data).web3,contract: (await data).instance });
 
 
           let zz = await this.state.contract.methods.Certificates(this.state.hash).call();
@@ -69,8 +68,7 @@ export default class UpdateCertificate extends Component {
                 this.state.cin_passport,
                 this.state.nationalite,
                 dateToEpoch(new Date(this.state.dateRealisation)),
-                this.state.numeroDiplome,
-                this.state.userid
+                this.state.numeroDiplome
         ).send({ from: this.state.account });
 
         this.setState({
@@ -84,7 +82,6 @@ export default class UpdateCertificate extends Component {
     }
 
     render() {
-        console.log(this.state)
         if(this.state.redirect){
             return(
                 <Redirect to={`/viewAll`} />

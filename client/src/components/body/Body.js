@@ -50,7 +50,7 @@ function Body() {
                 
                   <Route exact path="/view/:hash" component={ViewCertificate}></Route>
                   <Route exact path="/view/" component={ViewCertificate}></Route>
-                  <Route path="/profile/:profileUrl/diplomas" exact component={isLogged ? DiplomasList :Error404  }/>
+                  <Route path="/profile/:profileUrl/diplomas" exact component={ DiplomasList}/>
                   <Route path="/profile/:profileUrl/projects" exact>
                     <ProjectsList user={auth.user}/>
                   </Route>
@@ -60,17 +60,16 @@ function Body() {
                   </Route>
 
                   {/*  Admin */}
-                  <Route exact path="/viewAll" component={ViewAllCertificates}></Route>
+                  <Route exact path="/viewAll" component={isAdmin ? ViewAllCertificates : Error404}></Route>
                   
                   <Route exact path="/add">
-                  <AddCertificate user={auth.user}/> 
+                    {isAdmin ? <AddCertificate user={auth.user}/>  : Error404 }
+                  
                   </Route> 
 
-                  <Route exact path="/update/">
-                    <UpdateCertificate user={auth.user} />
-                  </Route>
-                  <Route exact path="/delete/" component={DeleteCertificate}></Route>
-                  <Route exact path="/users" component={Users}></Route>
+                  <Route exact path="/update/" component={isAdmin? UpdateCertificate : Error404}/>
+                  <Route exact path="/delete/" component={isAdmin ? DeleteCertificate : Error404}></Route>
+                  <Route exact path="/users" component={isAdmin ? Users : Error404}></Route>
                   <Route path="/edit_user/:id" component={isAdmin ? EditUser : Error404} exact />
 
                 

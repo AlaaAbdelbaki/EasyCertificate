@@ -20,10 +20,10 @@ app.use('/user' , require('./routes/userRouter'))
 app.use('/api' , require('./routes/upload'))
 const projectRouter = require("./routes/Projects");
 const jobRouter = require("./routes/Jobs");
-
 app.use("/projects",projectRouter);
 app.use("/jobs",jobRouter);
 
+app.use(express.static('img'))
 
 // Connect to mongodb
 const URI = process.env.MONGODB_URL

@@ -46,7 +46,7 @@ class ViewCertificate extends Component {
 
    
     componentDidMount =  async () => {
-
+        console.log(this.props)
         this.setState({hash: this.props.location.state.params.id})
 
         let data = await loadBlockchainData();

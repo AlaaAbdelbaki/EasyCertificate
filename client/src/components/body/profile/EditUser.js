@@ -32,17 +32,21 @@ function EditUser() {
     },[users, id, history])
 
     const handleUpdate = async () => {
+        
         try {
-            if(num % 2 !== 0){
-                const res = await axios.patch(`/user/update_role/${editUser._id}`, {
-                    role: checkAdmin ? 1 : 0
+            
+                const res = await axios.patch(`/user/update`, {
+                    id:editUser._id,
+                    role: checkAdmin ? 1 : 0,
+                    email:editUser.email,
+                    profileId:editUser.profileId,
                 }, {
                     headers: {Authorization: token}
                 })
 
                 setSuccess(res.data.msg)
-                setNum(0)
-            }
+                
+            
         } catch (err) {
             err.response.data.msg && setErr(err.response.data.msg)
         }
@@ -52,7 +56,6 @@ function EditUser() {
         setSuccess('')
         setErr('')
         setCheckAdmin(!checkAdmin)
-        setNum(num + 1)
     }
 
     return (
@@ -69,7 +72,12 @@ function EditUser() {
 
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
-                    <input type="email" name="email" defaultValue={editUser.email} disabled />
+                    <input type="email" name="email" defaultValue={editUser.email} onChange={event => editUser.email=event.target.value}  />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <input type="text" name="username" defaultValue={editUser.profileId} onChange={event => editUser.profileId=event.target.value}  />
                 </div>
 
                 <div className="form-group">

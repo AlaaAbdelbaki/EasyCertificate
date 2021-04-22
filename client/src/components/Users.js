@@ -75,6 +75,7 @@ function Profile() {
                                 
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Username</th>
                                 <th>Admin</th>
                                 <th>Action</th>
                             </tr>
@@ -85,6 +86,7 @@ function Profile() {
                                     <tr key={user._id}>
                                         <td>{user.name}</td>
                                         <td>{user.email}</td>
+                                        <td>{user.profileId}</td>
                                         <td>
                                             {
                                                 user.role === 1
