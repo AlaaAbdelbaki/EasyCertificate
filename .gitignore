@@ -1,4 +1,4 @@
 node_modules
 .env
-client\public\img\profilePictures
+/client/public/img/profilePictures
 tmp

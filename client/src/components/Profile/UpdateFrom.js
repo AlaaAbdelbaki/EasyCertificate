@@ -23,6 +23,7 @@ class UpdateFrom extends Component {
         super(props);
         this.state = {
             // id: this.props.user._id,
+            disableBtn: false,
             email: this.props.user.email,
             password: this.props.user.password,
             profilePicture: this.props.user.profilePicture,
@@ -53,32 +54,37 @@ class UpdateFrom extends Component {
 
         const formData = new FormData();
 
-        formData.append("profilePicture",this.state.profilePicture);
-        formData.append("email",this.state.email);
-        formData.append("name",this.state.name);
-        formData.append("city",this.state.city);
-        formData.append("country",this.state.country);
-        formData.append("bio",this.state.bio);
-        formData.append("profileId",this.state.profileId);
-        formData.append("facebook",this.state.facebook);
-        formData.append("twitter",this.state.twitter);
-        formData.append("linkedin",this.state.linkedin);
+        formData.append("profilePicture", this.state.profilePicture);
+        formData.append("email", this.state.email);
+        formData.append("name", this.state.name);
+        formData.append("city", this.state.city);
+        formData.append("country", this.state.country);
+        formData.append("bio", this.state.bio);
+        formData.append("profileId", this.state.profileId);
+        formData.append("facebook", this.state.facebook);
+        formData.append("twitter", this.state.twitter);
+        formData.append("linkedin", this.state.linkedin);
 
-        axios({
-            method: "post",
-            url: `http://localhost:5000/user/update/${this.props.user._id}`,
-            data: formData,
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-        .then(res => {
-            if (res.status === 200) {
-                this.props.snackbarShowMessage(`Updated Successfully !`);
-            }
-        }).catch(err => {
-            console.log(err);
-            this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
-        })
+        if (this.state.disableBtn === false) {
+            axios({
+                method: "post",
+                url: `http://localhost:5000/user/update/${this.props.user._id}`,
+                data: formData,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+                .then(res => {
+                    if (res.status === 200) {
+                        this.props.snackbarShowMessage(`Updated Successfully !`);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
+                });
+        }else{
+            this.props.snackbarShowMessage(`Error ! Profile ID already exists !`, "error");
+        }
 
+        window.location.replace(`http://localhost:3000/profile/${this.state.profileId}`);
     }
 
 
@@ -126,7 +132,7 @@ class UpdateFrom extends Component {
                                 />
                             </FormGroup>
                         </Col>
-                       
+
                     </Row>
                     <Row>
                         <Col md="12">
@@ -195,13 +201,38 @@ class UpdateFrom extends Component {
                                     defaultValue={this.state.profileId}
                                     onChange={event => {
                                         this.setState({
-                                            profileId: event.target.value,
+                                            profileId: event.target.value.toLowerCase(),
                                         });
                                     }}
                                     placeholder="Profile URL"
                                     onBlur={event => {
                                         //Check profile link validity here
-
+                                        const currentLink = window.location.href.replace("http://localhost:3000/profile/", "").replace("/update", "");
+                                        // console.log(currentLink);
+                                        if (event.target.value !== currentLink) {
+                                            axios.get(`http://localhost:5000/user/` + event.target.value.toLowerCase())
+                                                .then(res => {
+                                                    // console.log("field value is: "+event.target.value);
+                                                    // console.log("result is : "+res.data.length);
+                                                    if (res.data.length > 0 && event.target.value !== "") {
+                                                        this.setState({
+                                                            disableBtn: true,
+                                                        });
+                                                        this.props.snackbarShowMessage(`Profile Id already in use, Please try another one`, `error`)
+                                                    } else {
+                                                        this.setState({
+                                                            disableBtn: false,
+                                                        });
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log("error oh no !! " + err);
+                                                });
+                                        } else {
+                                            this.setState({
+                                                disableBtn: false,
+                                            });
+                                        }
                                     }}
                                 />
 
@@ -270,15 +301,16 @@ class UpdateFrom extends Component {
                         <div className="update ml-auto mr-auto">
                             <Button
                                 className="btn-round"
+                                disabled={this.state.disableBtn}
                                 color="success"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (this.state.profileId === "" || this.state.profileId === undefined) {
-                                        this.props.snackbarShowMessage(`Profile URL cannot be empty !`,`error`)
+                                        this.props.snackbarShowMessage(`Profile URL cannot be empty !`, `error`)
                                     } else {
                                         if (this.state.profileId.includes(" ")) {
                                             this.props.snackbarShowMessage(`Profile URL cannot contain spaces !`, "error");
-                                        }else{
+                                        } else {
                                             this.updateProfile();
                                         }
                                     }

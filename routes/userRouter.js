@@ -92,11 +92,10 @@ const storage = multer.diskStorage({
     await User.find({
       profileId: req.params.profileId
     })
+      .select("-password")
       .then(user => res.json(user))
       .catch(err => res.status(400).json("Error: " + err));
   });
-  
-  
   
   //Creates a new User
   // /users/add
@@ -113,7 +112,8 @@ const storage = multer.diskStorage({
       .catch(err => res.status(400).json('Error: ' + err));
   });
   
-  
+
+
   //Deletes the user
   // /users/delete/:id
   router.route("/delete/:id").delete((req, res) => {
