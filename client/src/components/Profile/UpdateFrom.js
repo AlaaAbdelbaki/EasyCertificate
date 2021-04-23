@@ -50,21 +50,27 @@ class UpdateFrom extends Component {
 
     updateProfile() {
 
-        axios.post(`http://localhost:5000/user/update/${this.props.user._id}`, {
-            profilePicture: this.state.profilePicture,
-            email: this.state.email,
-            password: this.state.password,
-            name: this.state.name,
-            lastName: this.state.lastName,
-            address: this.state.address,
-            city: this.state.city,
-            country: this.state.country,
-            bio: this.state.bio,
-            profileId: this.state.profileId,
-            facebook: this.state.facebook,
-            twitter: this.state.twitter,
-            linkedin: this.state.linkedin
-        }).then(res => {
+
+        const formData = new FormData();
+
+        formData.append("profilePicture",this.state.profilePicture);
+        formData.append("email",this.state.email);
+        formData.append("name",this.state.name);
+        formData.append("city",this.state.city);
+        formData.append("country",this.state.country);
+        formData.append("bio",this.state.bio);
+        formData.append("profileId",this.state.profileId);
+        formData.append("facebook",this.state.facebook);
+        formData.append("twitter",this.state.twitter);
+        formData.append("linkedin",this.state.linkedin);
+
+        axios({
+            method: "post",
+            url: `http://localhost:5000/user/update/${this.props.user._id}`,
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        .then(res => {
             if (res.status === 200) {
                 this.props.snackbarShowMessage(`Updated Successfully !`);
             }

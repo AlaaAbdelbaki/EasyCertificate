@@ -36,7 +36,7 @@ router.post('/facebook_login', userCtrl.facebookLogin)
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '../public/img/profilePictures');
+      cb(null, './client/public/img/profilePictures');
     },
     filename: function (req, file, cb) {
       cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);

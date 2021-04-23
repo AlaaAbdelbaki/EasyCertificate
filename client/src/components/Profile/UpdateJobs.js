@@ -98,6 +98,7 @@ export class UpdateJobs extends Component {
                 console.log(requestOptions.body);
                 if (response.status === 200) {
                     this.resetFields();
+                    this.getJobs(this.state.userId);
                     this.props.snackbarShowMessage(`Added Successfully !`);
                 } else {
                     this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
@@ -119,8 +120,8 @@ export class UpdateJobs extends Component {
         fetch(`http://localhost:5000/jobs/delete/` + jobId, requestOptions)
             .then(response => {
                 if (response.status === 200) {
+                    this.getJobs(this.state.userId);
                     this.props.snackbarShowMessage(`Job deleted successfully !`);
-                    window.location.reload(false); 
                 } else {
                     this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
                 }
@@ -149,7 +150,7 @@ export class UpdateJobs extends Component {
                 if (response.status === 200) {
                     this.props.snackbarShowMessage(`Updated Successfully !`);
                     this.resetFields();
-                    window.location.reload(false); 
+                    this.getJobs(this.state.userId);
                 } else {
                     this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
                 }
