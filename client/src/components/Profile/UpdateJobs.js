@@ -33,12 +33,32 @@ export class UpdateJobs extends Component {
             left: "",
             update: false,
             userId: this.props.user._id,
+            
         }
         this.AddJob = this.AddJob.bind(this);
         this.UpdateJob = this.UpdateJob.bind(this);
         this.DeleteJob = this.DeleteJob.bind(this);
         this.resetFields = this.resetFields.bind(this);
     }
+
+    getUser() {
+        // console.log("entered here :) hello boi");
+        fetch(`http://localhost:5000/user/${window.location.href.replace("http://localhost:3000/profile/", "").replace("/update", "")}`)
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ user: res[0]['_id'] });
+                // localStorage.setItem("user", JSON.stringify(res));
+            })
+            .catch(err => this.setState({ user: err }));
+    }
+
+
+    componentDidMount() {
+
+        if(this.props.user==null) this.getUser();
+        this.getJobs(this.props.user._id);
+    }
+
 
     getJobs(id) {
         jobs = [];
@@ -59,11 +79,6 @@ export class UpdateJobs extends Component {
                 // do not delete for some unknown reason this is what makes the code work :) :) :) 
             })
             .catch(err => this.setState({ user: err }));
-    }
-
-    componentWillMount() {
-        // console.log(this.props.user._id);
-        this.getJobs(this.props.user._id);
     }
 
     resetFields() {

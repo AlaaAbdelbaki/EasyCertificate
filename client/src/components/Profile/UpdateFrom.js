@@ -21,24 +21,79 @@ class UpdateFrom extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            // id: this.props.user._id,
-            disableBtn: false,
-            email: this.props.user.email,
-            password: this.props.user.password,
-            profilePicture: this.props.user.profilePicture,
-            name: this.props.user.name,
-            lastName: this.props.user.lastName,
-            address: this.props.user.address,
-            city: this.props.user.city,
-            country: this.props.user.country,
-            bio: this.props.user.bio,
-            profileId: this.props.user.profileId,
-            facebook: this.props.user.facebook,
-            twitter: this.props.user.twitter,
-            linkedin: this.props.user.linkedin,
+        if(this.props.user==null)
+        {
+            
+            this.state = {
+                user: null,
+                disableBtn: false,
+                email: '',
+                password: '',
+                profilePicture: '',
+                name: '',
+                lastName: '',
+                address: '',
+                city: '',
+                country: '',
+                bio: '',
+                profileId: '',
+                facebook: '',
+                twitter: '',
+                linkedin: '',
+            }
+        }else
+        {
+            this.state = {
+                // id: this.props.user._id,
+                disableBtn: false,
+                email: this.props.user.email,
+                password: this.props.user.password,
+                profilePicture: this.props.user.profilePicture,
+                name: this.props.user.name,
+                lastName: this.props.user.lastName,
+                address: this.props.user.address,
+                city: this.props.user.city,
+                country: this.props.user.country,
+                bio: this.props.user.bio,
+                profileId: this.props.user.profileId,
+                facebook: this.props.user.facebook,
+                twitter: this.props.user.twitter,
+                linkedin: this.props.user.linkedin,
+            }
         }
+       
         this.updateProfile = this.updateProfile.bind(this);
+    }
+
+    
+    getUser() {
+        // console.log("entered here :) hello boi");
+        fetch(`http://localhost:5000/user/${window.location.href.replace("http://localhost:3000/profile/", "").replace("/update", "")}`)
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ user: res[0],
+                    email:res[0]['email'],
+                    password:res[0]['password'],
+                    profilePicture:res[0]['profilePicture'],
+                    name:res[0]['name'],
+                    lastName:res[0]['lastName'],
+                    address:res[0]['address'],
+                    city:res[0]['city'],
+                    country:res[0]['country'],
+                    bio:res[0]['bio'],
+                    profileId:res[0]['profileId'],
+                    facebook:res[0]['facebook'],
+                    twitter:res[0]['twitter'],
+                    linkedin:res[0]['linkedin'] });
+                // localStorage.setItem("user", JSON.stringify(res));
+            })
+            .catch(err => this.setState({ user: err }));
+    }
+
+
+    componentWillMount() {
+
+        if(this.props.user==null){  console.log('getting user'); this.getUser()};
     }
 
     selectCountry(val) {
@@ -84,13 +139,15 @@ class UpdateFrom extends Component {
             this.props.snackbarShowMessage(`Error ! Profile ID already exists !`, "error");
         }
 
-        window.location.replace(`http://localhost:3000/profile/${this.state.profileId}`);
+        setInterval(() => {
+            window.location.reload();
+        }, 200);
+        //window.location.replace(`http://localhost:3000/profile/${this.state.profileId}`);
+        
     }
 
-
-
     render() {
-        // const countriesList = require("./countries.json");
+        console.log(this.state)
         return (
             <div>
                 {/* Add form here if u wanted to add idk */}

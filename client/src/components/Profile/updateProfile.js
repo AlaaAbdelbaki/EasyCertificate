@@ -72,7 +72,7 @@ class User extends React.Component {
                         <Row>
                             {/* Basic user info */}
                             <Col md="4">
-                                <UserCard user={this.props.user} profile={this.state.user} />
+                            {this.state.user==null ? <div></div> :<UserCard user={this.props.user} profile={this.state.user} />}
                                 {/* <RecentDiplomas /> */}
                             </Col>
                             {/* Edit Profile */}
@@ -84,13 +84,13 @@ class User extends React.Component {
                                     <CardBody>
                                         <Tabs defaultActiveKey="basicInfo" id="uncontrolled-tab-example">
                                             <Tab title="Basic Info" eventKey="basicInfo">
-                                                <UpdateFrom user={this.props.user} />
+                                            {this.state.user==null ? <div></div> :<UpdateFrom user={this.state.user} />}
                                             </Tab>
                                             <Tab title="Projects" eventKey="projects">
-                                                <UpdateProjects user={this.props.user} />
+                                                {this.state.user==null ? <div></div> :<UpdateProjects user={this.state.user} />}
                                             </Tab>
                                             <Tab title="Job Experience" eventKey="jobs">
-                                                <UpdateJobs user={this.props.user} />
+                                                {this.state.user==null ? <div></div> :<UpdateJobs user={this.state.user} />}
                                             </Tab>
                                         </Tabs>
                                     </CardBody>

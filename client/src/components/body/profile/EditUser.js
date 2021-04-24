@@ -16,7 +16,6 @@ function EditUser() {
     const [checkAdmin, setCheckAdmin] = useState(false)
     const [err, setErr] = useState(false)
     const [success, setSuccess] = useState(false)
-    const [num, setNum] = useState(0)
 
     useEffect(() => {
         if(users.length !== 0){
