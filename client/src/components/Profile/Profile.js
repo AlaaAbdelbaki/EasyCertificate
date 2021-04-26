@@ -11,7 +11,9 @@ import Projects from "./Projects";
 import RecentDiplomas from "./RecentDiplomas";
 import UserCard from "./UserCard";
 import WorkExp from "./WorkExp";
-
+// import '../../assets/demo/demo.css';
+import '../../assets/css/paper-dashboard.css';
+// import '../../assets/css/paper-dashboard.min.css';
 
 
 

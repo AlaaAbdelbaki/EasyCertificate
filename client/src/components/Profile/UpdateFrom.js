@@ -4,12 +4,7 @@ import React, { Component } from 'react';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import {
     Button,
-
-
-
-
     Col, Form, FormGroup,
-
     Input,
     Row
 } from "reactstrap";
@@ -152,7 +147,10 @@ class UpdateFrom extends Component {
         var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
 
         if(format.test(profileId)){
-            this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`)
+            this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`);
+            this.setState({
+                disableBtn : true,
+            })
             return false;
         }else{
             axios.get(`http://localhost:5000/user/` + profileId.toLowerCase())

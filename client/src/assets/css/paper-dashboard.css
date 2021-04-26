@@ -474,7 +474,7 @@ Copyright (c) 2015 Daniel Eden
     top: 1px; }
 
 .btn-primary {
-  background-color: #51cbce;
+  background-color: #51cbce !important;
   color: #FFFFFF; }
   .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary:active:focus, .btn-primary:active:hover, .btn-primary.active:focus, .btn-primary.active:hover,
   .show > .btn-primary.dropdown-toggle,
@@ -622,7 +622,7 @@ Copyright (c) 2015 Daniel Eden
       box-shadow: none; }
 
 .btn-danger {
-  background-color: #ef8157;
+  background-color: #ef8157 !important;
   color: #FFFFFF; }
   .btn-danger:hover, .btn-danger:focus, .btn-danger:active, .btn-danger.active, .btn-danger:active:focus, .btn-danger:active:hover, .btn-danger.active:focus, .btn-danger.active:hover,
   .show > .btn-danger.dropdown-toggle,
@@ -661,7 +661,7 @@ Copyright (c) 2015 Daniel Eden
 .btn-outline-default {
   background: transparent;
   border: 2px solid #66615B !important;
-  color: #66615B;
+  color: #66615B !important;
   opacity: 1;
   filter: alpha(opacity=100); }
   .btn-outline-default:hover, .btn-outline-default:focus, .btn-outline-default:active, .btn-outline-default:focus:active, .btn-outline-default.active,
@@ -685,9 +685,9 @@ Copyright (c) 2015 Daniel Eden
     border-color: #66615B !important; }
 
 .btn-outline-primary {
-  background: transparent;
+  background: transparent !important;
   border: 2px solid #51cbce !important;
-  color: #51cbce;
+  color: #51cbce !important;
   opacity: 1;
   filter: alpha(opacity=100); }
   .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary:focus:active, .btn-outline-primary.active,
@@ -1013,12 +1013,12 @@ fieldset[disabled]
   background-color: #51bcda !important; }
 
 .btn-round {
-  border-width: 1px;
-  border-radius: 30px;
-  padding-right: 23px;
-  padding-left: 23px; }
+  border-width: 1px !important; 
+  border-radius: 30px !important;
+  padding-right: 23px !important;
+  padding-left: 23px !important; }
   .btn-round.btn-simple {
-    padding: 10px 22px; }
+    padding: 10px 22px !important; }
 
 .no-caret.dropdown-toggle::after {
   display: none; }
@@ -2541,8 +2541,8 @@ License - nucleoapp.com/license/
 -------------------------------- */
 @font-face {
   font-family: 'nucleo-icons';
-  src: url("~assets/fonts/nucleo-icons.eot");
-  src: url("~assets/fonts/nucleo-icons.eot") format("embedded-opentype"), url("~assets/fonts/nucleo-icons.woff2") format("woff2"), url("~assets/fonts/nucleo-icons.woff") format("woff"), url("~assets/fonts/nucleo-icons.ttf") format("truetype");
+  src: url("../../assets/fonts/nucleo-icons.eot");
+  src: url("../../assets/fonts/nucleo-icons.eot") format("embedded-opentype"), url("../../assets/fonts/nucleo-icons.woff2") format("woff2"), url("../../assets/fonts/nucleo-icons.woff") format("woff"), url("../../assets/fonts/nucleo-icons.ttf") format("truetype");
   font-weight: normal;
   font-style: normal; }
 
@@ -4757,8 +4757,8 @@ License - nucleoapp.com/license/
 -------------------------------- */
 @font-face {
   font-family: 'nucleo-icons';
-  src: url("~assets/fonts/nucleo-icons.eot");
-  src: url("~assets/fonts/nucleo-icons.eot") format("embedded-opentype"), url("~assets/fonts/nucleo-icons.woff2") format("woff2"), url("~assets/fonts/nucleo-icons.woff") format("woff"), url("~assets/fonts/nucleo-icons.ttf");
+  src: url("../../assets/fonts/nucleo-icons.eot");
+  src: url("../../assets/fonts/nucleo-icons.eot") format("embedded-opentype"), url("../../assets/fonts/nucleo-icons.woff2") format("woff2"), url("../../assets/fonts/nucleo-icons.woff") format("woff"), url("../../assets/fonts/nucleo-icons.ttf");
   font-weight: normal;
   font-style: normal; }
 
