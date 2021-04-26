@@ -21,9 +21,8 @@ class UpdateFrom extends Component {
 
     constructor(props) {
         super(props);
-        if(this.props.user==null)
-        {
-            
+        if (this.props.user == null) {
+
             this.state = {
                 user: null,
                 disableBtn: false,
@@ -41,8 +40,7 @@ class UpdateFrom extends Component {
                 twitter: '',
                 linkedin: '',
             }
-        }else
-        {
+        } else {
             this.state = {
                 // id: this.props.user._id,
                 disableBtn: false,
@@ -61,39 +59,41 @@ class UpdateFrom extends Component {
                 linkedin: this.props.user.linkedin,
             }
         }
-       
+
         this.updateProfile = this.updateProfile.bind(this);
+        this.verifyProfileId = this.verifyProfileId.bind(this);
     }
 
-    
+
     getUser() {
         // console.log("entered here :) hello boi");
         fetch(`http://localhost:5000/user/${window.location.href.replace("http://localhost:3000/profile/", "").replace("/update", "")}`)
             .then(res => res.json())
             .then(res => {
-                this.setState({ user: res[0],
-                    email:res[0]['email'],
-                    password:res[0]['password'],
-                    profilePicture:res[0]['profilePicture'],
-                    name:res[0]['name'],
-                    lastName:res[0]['lastName'],
-                    address:res[0]['address'],
-                    city:res[0]['city'],
-                    country:res[0]['country'],
-                    bio:res[0]['bio'],
-                    profileId:res[0]['profileId'],
-                    facebook:res[0]['facebook'],
-                    twitter:res[0]['twitter'],
-                    linkedin:res[0]['linkedin'] });
+                this.setState({
+                    user: res[0],
+                    email: res[0]['email'],
+                    password: res[0]['password'],
+                    profilePicture: res[0]['profilePicture'],
+                    name: res[0]['name'],
+                    lastName: res[0]['lastName'],
+                    address: res[0]['address'],
+                    city: res[0]['city'],
+                    country: res[0]['country'],
+                    bio: res[0]['bio'],
+                    profileId: res[0]['profileId'],
+                    facebook: res[0]['facebook'],
+                    twitter: res[0]['twitter'],
+                    linkedin: res[0]['linkedin']
+                });
                 // localStorage.setItem("user", JSON.stringify(res));
             })
             .catch(err => this.setState({ user: err }));
     }
 
 
-    componentWillMount() {
-
-        if(this.props.user==null){  console.log('getting user'); this.getUser()};
+    componentWillMount() {        
+        if (this.props.user == null) { console.log('getting user'); this.getUser() };
     }
 
     selectCountry(val) {
@@ -135,15 +135,46 @@ class UpdateFrom extends Component {
                     console.log(err);
                     this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
                 });
-        }else{
+        } else {
             this.props.snackbarShowMessage(`Error ! Profile ID already exists !`, "error");
         }
 
-        setInterval(() => {
-            window.location.reload();
-        }, 200);
-        //window.location.replace(`http://localhost:3000/profile/${this.state.profileId}`);
-        
+        // setInterval(() => {
+        //     window.location.reload();
+        // }, 200);
+        setInterval(200);
+        window.location.replace(`http://localhost:3000/profile/${this.state.profileId}`);
+
+    }
+
+    verifyProfileId(profileId) {
+
+        var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
+
+        if(format.test(profileId)){
+            this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`)
+            return false;
+        }else{
+            axios.get(`http://localhost:5000/user/` + profileId.toLowerCase())
+            .then(res => {
+                // console.log("field value is: "+event.target.value);
+                // console.log("result is : "+res.data.length);
+                if (res.data.length > 0) {
+                    this.setState({
+                        disableBtn: true,
+                    });
+                    this.props.snackbarShowMessage(`Profile Id already in use, Please try another one`, `error`)
+                } else {
+                    this.setState({
+                        disableBtn: false,
+                    });
+                }
+            })
+            .catch(err => {
+                console.log("error oh no !! " + err);
+            });
+            return true;
+        }
     }
 
     render() {
@@ -267,24 +298,7 @@ class UpdateFrom extends Component {
                                         const currentLink = window.location.href.replace("http://localhost:3000/profile/", "").replace("/update", "");
                                         // console.log(currentLink);
                                         if (event.target.value !== currentLink) {
-                                            axios.get(`http://localhost:5000/user/` + event.target.value.toLowerCase())
-                                                .then(res => {
-                                                    // console.log("field value is: "+event.target.value);
-                                                    // console.log("result is : "+res.data.length);
-                                                    if (res.data.length > 0 && event.target.value !== "") {
-                                                        this.setState({
-                                                            disableBtn: true,
-                                                        });
-                                                        this.props.snackbarShowMessage(`Profile Id already in use, Please try another one`, `error`)
-                                                    } else {
-                                                        this.setState({
-                                                            disableBtn: false,
-                                                        });
-                                                    }
-                                                })
-                                                .catch(err => {
-                                                    console.log("error oh no !! " + err);
-                                                });
+                                            this.verifyProfileId(event.target.value);
                                         } else {
                                             this.setState({
                                                 disableBtn: false,
@@ -362,15 +376,18 @@ class UpdateFrom extends Component {
                                 color="success"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    if (this.state.profileId === "" || this.state.profileId === undefined) {
-                                        this.props.snackbarShowMessage(`Profile URL cannot be empty !`, `error`)
-                                    } else {
-                                        if (this.state.profileId.includes(" ")) {
-                                            this.props.snackbarShowMessage(`Profile URL cannot contain spaces !`, "error");
-                                        } else {
-                                            this.updateProfile();
-                                        }
+                                    if(this.verifyProfileId(this.state.profileId)){
+                                        this.updateProfile();
                                     }
+                                    // if (this.state.profileId === "" || this.state.profileId === undefined) {
+                                    //     this.props.snackbarShowMessage(`Profile URL cannot be empty !`, `error`)
+                                    // } else {
+                                    //     if (this.state.profileId.includes(" ")) {
+                                    //         this.props.snackbarShowMessage(`Profile URL cannot contain spaces !`, "error");
+                                    //     } else {
+                                    //         this.updateProfile();
+                                    //     }
+                                    // }
                                 }}>
                                 Update Profile
                             </Button>
