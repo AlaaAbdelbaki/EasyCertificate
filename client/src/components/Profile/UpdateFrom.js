@@ -39,8 +39,10 @@ class UpdateFrom extends Component {
             this.state = {
                 // id: this.props.user._id,
                 disableBtn: false,
+                updatePwdDisabled:false,
                 email: this.props.user.email,
-                password: this.props.user.password,
+                password: null,
+                confirmPassword: null,
                 profilePicture: this.props.user.profilePicture,
                 name: this.props.user.name,
                 lastName: this.props.user.lastName,
@@ -68,7 +70,7 @@ class UpdateFrom extends Component {
                 this.setState({
                     user: res[0],
                     email: res[0]['email'],
-                    password: res[0]['password'],
+                    password: null,
                     profilePicture: res[0]['profilePicture'],
                     name: res[0]['name'],
                     lastName: res[0]['lastName'],
@@ -87,7 +89,7 @@ class UpdateFrom extends Component {
     }
 
 
-    componentWillMount() {        
+    componentWillMount() {
         if (this.props.user == null) { console.log('getting user'); this.getUser() };
     }
 
@@ -146,37 +148,37 @@ class UpdateFrom extends Component {
 
         var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
 
-        if(format.test(profileId)){
+        if (format.test(profileId)) {
             this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`);
             this.setState({
-                disableBtn : true,
+                disableBtn: true,
             })
             return false;
-        }else{
+        } else {
             axios.get(`http://localhost:5000/user/` + profileId.toLowerCase())
-            .then(res => {
-                // console.log("field value is: "+event.target.value);
-                // console.log("result is : "+res.data.length);
-                if (res.data.length > 0) {
-                    this.setState({
-                        disableBtn: true,
-                    });
-                    this.props.snackbarShowMessage(`Profile Id already in use, Please try another one`, `error`)
-                } else {
-                    this.setState({
-                        disableBtn: false,
-                    });
-                }
-            })
-            .catch(err => {
-                console.log("error oh no !! " + err);
-            });
+                .then(res => {
+                    // console.log("field value is: "+event.target.value);
+                    // console.log("result is : "+res.data.length);
+                    if (res.data.length > 0) {
+                        this.setState({
+                            disableBtn: true,
+                        });
+                        this.props.snackbarShowMessage(`Profile Id already in use, Please try another one`, `error`)
+                    } else {
+                        this.setState({
+                            disableBtn: false,
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log("error oh no !! " + err);
+                });
             return true;
         }
     }
 
     render() {
-        console.log(this.state)
+        // console.log(this.state)
         return (
             <div>
                 {/* Add form here if u wanted to add idk */}
@@ -308,7 +310,6 @@ class UpdateFrom extends Component {
                             </FormGroup>
                         </Col>
                     </Row>
-
                     <Row>
                         <Col sm="12" lg="3">
                             <h5><i className="fa fa-facebook" /> Facebook</h5>
@@ -349,7 +350,7 @@ class UpdateFrom extends Component {
                     </Row>
                     <Row>
                         <Col sm="12" lg="3">
-                            <h5><i className="fa fa-facebook" /> Linkedin</h5>
+                            <h5><i className="fa fa-linkedin" /> Linkedin</h5>
                         </Col>
                         <Col sm="4" lg="3">
                             <FormGroup>
@@ -374,7 +375,7 @@ class UpdateFrom extends Component {
                                 color="success"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    if(this.verifyProfileId(this.state.profileId)){
+                                    if (this.verifyProfileId(this.state.profileId)) {
                                         this.updateProfile();
                                     }
                                     // if (this.state.profileId === "" || this.state.profileId === undefined) {
@@ -388,6 +389,97 @@ class UpdateFrom extends Component {
                                     // }
                                 }}>
                                 Update Profile
+                            </Button>
+                        </div>
+                    </Row>
+                </Form>
+                <Form>
+                    <Row>
+                        <Col><h5>Change Password</h5></Col>
+                    </Row>
+                    <Row>
+                        <Col md='12'>
+                            <label>Password</label>
+                            <Input
+                                type="password"
+                                placeholder="Password"
+                                onChange={event => {
+                                    // console.log(event.target.value);
+                                    this.setState({
+                                        password: event.target.value,
+                                    })
+                                }}
+                            />
+
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md='12'>
+                            <label>Confirm Password</label>
+                            <Input
+                                type="password"
+                                placeholder="Retype Password"
+                                onChange={event=>{
+                                    // console.log(event.target.value);
+                                    this.setState({
+                                        confirmPassword: event.target.value,
+                                    })
+                                }}
+                                onBlur={event => {
+                                    if(event.target.value !== this.state.password){
+                                        this.props.snackbarShowMessage(`Passwords not matching please verify`, "error");
+                                        this.setState({
+                                            updatePwdDisabled : true,
+                                        });
+                                    }else{
+                                        this.props.snackbarShowMessage(`Passwords match !`, "success");
+                                        this.setState({
+                                            updatePwdDisabled : false,
+                                        })
+                                    }
+                                }}
+                            />
+
+                        </Col>
+                    </Row>
+                    <br/>
+                    <Row>
+                        <div className="update ml-auto mr-auto">
+                            <Button
+                                className="btn-round"
+                                disabled={this.state.updatePwdDisabled}
+                                color="success"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                   if((this.state.password === null || this.state.confirmPassword === null ) || (this.state.password === "" || this.state.confirmPassword === "" ) ){
+                                       console.log("Password: "+this.state.password);
+                                       console.log("confirm password: "+this.state.confirmPassword);
+                                        this.props.snackbarShowMessage(`Password fields are empty please verify !`, "error");
+                                        this.setState({
+                                            updatePwdDisabled : true,
+                                        });
+                                   }else{
+                                       if(this.state.password === this.state.confirmPassword){
+                                           const data =  {
+                                               "id":this.props.user._id,
+                                               "password":this.state.password
+                                            }
+                                           axios.post("http://localhost:5000/user/updatepwd",data)
+                                           .then(res=>{
+                                               if(res.status === 200){
+                                                this.props.snackbarShowMessage(`Password updated successfully`, "success");
+                                               }else{
+                                                this.props.snackbarShowMessage(`Error try again later !`, "error");
+                                               }
+                                           })
+                                           .catch(err=>{
+                                               console.log("axios error !: "+err);
+                                           })
+                                       }
+                                   }
+
+                                }}>
+                                Update Password
                             </Button>
                         </div>
                     </Row>
