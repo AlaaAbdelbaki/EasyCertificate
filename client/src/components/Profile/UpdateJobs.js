@@ -2,16 +2,13 @@ import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
 import {
     Button,
-
-
-
-
     Col, Form, FormGroup,
-
     Input,
     Row
 } from "reactstrap";
+import DatePicker from "react-datepicker";
 import { withSnackbar } from '../../components/Snackbar';
+import { dateToEpoch, epochToDate } from '../../utils/helper';
 
 
 
@@ -29,11 +26,11 @@ export class UpdateJobs extends Component {
             jobId: "",
             title: "",
             company: "",
-            started: "",
-            left: "",
+            started: new Date(),
+            left: new Date(),
             update: false,
             userId: this.props.user._id,
-            
+
         }
         this.AddJob = this.AddJob.bind(this);
         this.UpdateJob = this.UpdateJob.bind(this);
@@ -55,7 +52,7 @@ export class UpdateJobs extends Component {
 
     componentDidMount() {
 
-        if(this.props.user==null) this.getUser();
+        if (this.props.user == null) this.getUser();
         this.getJobs(this.props.user._id);
     }
 
@@ -86,8 +83,8 @@ export class UpdateJobs extends Component {
             jobId: "",
             title: "",
             company: "",
-            started: "",
-            left: "",
+            started: new Date(),
+            left: new Date(),
             update: false,
         })
     }
@@ -107,18 +104,23 @@ export class UpdateJobs extends Component {
             })
         };
         // console.log(requestOptions);
-        fetch(`http://localhost:5000/jobs/add/`, requestOptions)
-            .then(response => {
-                // console.log(response);
-                console.log(requestOptions.body);
-                if (response.status === 200) {
-                    this.resetFields();
-                    this.getJobs(this.state.userId);
-                    this.props.snackbarShowMessage(`Added Successfully !`);
-                } else {
-                    this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
-                }
-            });
+        if (this.state.started > this.state.left) {
+            this.props.snackbarShowMessage(`Start date can't be greater than leaving date !`, "error");
+        } else {
+
+            fetch(`http://localhost:5000/jobs/add/`, requestOptions)
+                .then(response => {
+                    // console.log(response);
+                    console.log(requestOptions.body);
+                    if (response.status === 200) {
+                        this.resetFields();
+                        this.getJobs(this.state.userId);
+                        this.props.snackbarShowMessage(`Added Successfully !`);
+                    } else {
+                        this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
+                    }
+                });
+        }
         console.log("snackbar should be out !! ");
         // return (
         //     // <Snackbar
@@ -157,27 +159,23 @@ export class UpdateJobs extends Component {
                 left: this.state.left,
             })
         };
-        fetch(`http://localhost:5000/jobs/update/` + jobId, requestOptions)
-            .then(response => {
-                // console.log(requestOptions);
-                // console.log(response);
-                // console.log(requestOptions.body);
-                if (response.status === 200) {
-                    this.props.snackbarShowMessage(`Updated Successfully !`);
-                    this.resetFields();
-                    this.getJobs(this.state.userId);
-                } else {
-                    this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
-                }
-            });
-        console.log("snackbar should be out !! ");
-        // return (
-        //     // <Snackbar
-        //     //     // severity="success"
-        //     //     // message="Updated successfully !"
-        //     // />
-        // )
-
+        if (this.state.started > this.state.left) {
+            this.props.snackbarShowMessage(`Start date can't be greater than leaving date !`, "error");
+        } else {
+            fetch(`http://localhost:5000/jobs/update/` + jobId, requestOptions)
+                .then(response => {
+                    // console.log(requestOptions);
+                    // console.log(response);
+                    // console.log(requestOptions.body);
+                    if (response.status === 200) {
+                        this.props.snackbarShowMessage(`Updated Successfully !`, 'success');
+                        this.resetFields();
+                        this.getJobs(this.state.userId);
+                    } else {
+                        this.props.snackbarShowMessage(`Error ! Please Try again later`, "error");
+                    }
+                });
+        }
     }
 
     render() {
@@ -272,7 +270,7 @@ export class UpdateJobs extends Component {
                                             <label>
                                                 Started
                                     </label>
-                                            <Input
+                                            {/* <Input
                                                 placeholder="Started"
                                                 type="text"
                                                 value={this.state.started}
@@ -282,13 +280,26 @@ export class UpdateJobs extends Component {
                                                         started: event.target.value,
                                                     });
                                                     // console.log("changed");
-                                                }} />
+                                                }} /> */}
+                                            <DatePicker
+                                                className="form-control"
+                                                selected={this.state.started}
+                                                dateFormat="dd/MM/yyyy"
+                                                showMonthYearDropdown={true}
+                                                onChange={date => {
+                                                    // console.log(date);
+                                                    // event.selected = event;
+                                                    this.setState({
+                                                        started: date,
+                                                    });
+                                                }}
+                                            />
                                         </Col>
                                         <Col md="6" sm="12">
                                             <label>
                                                 Left
                                     </label>
-                                            <Input
+                                            {/* <Input
                                                 placeholder="Left"
                                                 type="text"
                                                 value={this.state.left}
@@ -298,7 +309,20 @@ export class UpdateJobs extends Component {
                                                         left: event.target.value,
                                                     });
                                                     // console.log("changed");
-                                                }} />
+                                                }} /> */}
+                                            <DatePicker
+                                                className="form-control"
+                                                dateFormat="dd/MM/yyyy"
+                                                selected={this.state.left}
+                                                onChange={date => {
+                                                    // console.log(date.getFullYear());
+                                                    console.log(this.state.left);
+                                                    // event.selected = event;
+                                                    this.setState({
+                                                        left: date,
+                                                    });
+                                                }}
+                                            />
                                         </Col>
                                     </Row>
                                 </FormGroup>
@@ -328,16 +352,16 @@ export class UpdateJobs extends Component {
                             <tr key={job._id}>
                                 <td>{job.title}</td>
                                 <td>{job.company}</td>
-                                <td>{job.started}</td>
-                                <td>{job.left}</td>
+                                <td>{"" + new Date(job.started).getDate() + "/" + (new Date(job.started).getMonth() + 1) + "/" + new Date(job.started).getFullYear()}</td>
+                                <td>{"" + new Date(job.left).getDate() + "/" + (new Date(job.left).getMonth() + 1) + "/" + new Date(job.left).getFullYear()}</td>
                                 <td><Button className="btn-round" color="primary" onClick={(e) => {
                                     e.preventDefault();
                                     this.setState({
                                         jobId: job._id,
                                         title: job.title,
                                         company: job.company,
-                                        started: job.started,
-                                        left: job.left,
+                                        started: new Date(job.started),
+                                        left: new Date(job.left),
                                         update: true,
                                     });
                                 }}>Edit</Button></td>

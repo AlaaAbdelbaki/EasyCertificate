@@ -11,7 +11,7 @@ import {
 } from "reactstrap";
 
 
-var jobs=[]
+var jobs = []
 
 
 
@@ -22,7 +22,7 @@ export default class WorkExp extends Component {
         // console.log(this.props.user._id);
         this.state = {
             jobs: null,
-            full:false
+            full: false
         }
     }
     getJobs(id) {
@@ -35,16 +35,16 @@ export default class WorkExp extends Component {
                 this.setState({
                     full: true,
                 })
-                jobs=res;
+                jobs = res;
                 // do not delete for some unknown reason this is what makes the code work :) :) :) 
-                console.log("length is "+jobs.length());
+                console.log("length is " + jobs.length());
                 // do not delete for some unknown reason this is what makes the code work :) :) :) 
             })
             .catch(err => this.setState({ user: err }));
     }
 
     componentDidMount() {
-        
+
         this.getJobs(this.props.user._id);
         // console.log(this.state.jobs);
 
@@ -52,48 +52,49 @@ export default class WorkExp extends Component {
 
     render() {
         console.log(this.props.user);
-        if(this.props.user==null)
+        if (this.props.user == null)
             <div>
 
             </div>
-            else{
-        return (
-            <div>
-                <Card className="card-user">
-                    <CardHeader>
-                        <CardTitle tag="h5">Work Experience</CardTitle>
-                    </CardHeader>
-                    <CardBody>
-                        {/* Add form here if u wanted to add idk */}
-                        <Row>
-                            <Col sm="12">
-                                {jobs.map((job) => (
-                                    <ul className="list-unstyled team-members" key={job._id}>
-                                        <li>
-                                            {job.title} <br />
-                                            <span className="text-muted">
-                                                <small>{job.started}-{job.left}</small>
-                                            </span>
-                                            <br />
-                                        </li>
-                                    </ul>
-                                ))}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <div className="update ml-auto mr-auto">
-                            <Link
-                                    className="btn btn-round btn-primary"
-                                    to={`/profile/${window.location.href.replace("http://localhost:3000/profile/","")}/jobs`}>
-                                    View All
+        else {
+            return (
+                <div>
+                    <Card className="card-user">
+                        <CardHeader>
+                            <CardTitle tag="h5">Work Experience</CardTitle>
+                        </CardHeader>
+                        <CardBody>
+                            {/* Add form here if u wanted to add idk */}
+                            <Row>
+                                <Col sm="12">
+                                    {jobs.map((job) => (
+                                        <ul className="list-unstyled team-members" key={job._id}>
+                                            <li>
+                                                {job.title} - {job.company}<br />
+                                                <span className="text-muted">
+                                                    <small>{new Date(job.started).getFullYear()}-{new Date(job.left).getFullYear()}</small>
+                                                </span>
+                                                <br />
+                                            </li>
+                                        </ul>
+                                    ))}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <div className="update ml-auto mr-auto">
+                                    <Link
+                                        className="btn btn-round btn-primary"
+                                        to={`/profile/${window.location.href.replace("http://localhost:3000/profile/", "")}/jobs`}>
+                                        View All
                                 </Link>
-                            </div>
-                        </Row>
-                        <br />
-                        {/* end form here */}
-                    </CardBody>
-                </Card>
-            </div>
-        )}
+                                </div>
+                            </Row>
+                            <br />
+                            {/* end form here */}
+                        </CardBody>
+                    </Card>
+                </div>
+            )
+        }
     }
 }

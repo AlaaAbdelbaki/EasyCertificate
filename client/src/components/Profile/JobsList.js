@@ -79,9 +79,9 @@ export default class JobsList extends Component {
                                 {jobs.map((job) => (
                                     <ul className="list-unstyled team-members" key={job._id}>
                                         <li>
-                                            {job.title} <br />
+                                            {job.title} - {job.company} <br/>
                                             <span className="text-muted">
-                                                <small>{job.started}-{job.left}</small>
+                                                <small>{new Date(job.started).getFullYear()}-{new Date(job.left).getFullYear()}</small>
                                             </span>
                                             <br />
                                         </li>

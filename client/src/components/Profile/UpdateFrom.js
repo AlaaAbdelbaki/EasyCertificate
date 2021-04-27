@@ -146,7 +146,7 @@ class UpdateFrom extends Component {
 
     verifyProfileId(profileId) {
 
-        var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
+        var format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,<>\/?~]/;
 
         if (format.test(profileId)) {
             this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`);

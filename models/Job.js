@@ -11,11 +11,11 @@ const jobSchema = new Schema({
         required: true,
     },
     started: {
-        type: String,
+        type: Date,
         required: true,
     },
     left: {
-        type: String,
+        type: Date,
         required: true,
     },
     user:{
