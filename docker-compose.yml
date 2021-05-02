@@ -6,15 +6,6 @@ services:
         ports:
             - 27017:27017
         restart: unless-stopped
-    node:
-        image: easy-certificate:latest
-        container_name: node
-        restart: unless-stopped
-        working_dir: /app
-        ports:
-            - 3000:3000
-            - 5000:5000
-        
 
     ganache_cli:
         image: trufflesuite/ganache-cli:latest
@@ -22,3 +13,19 @@ services:
         restart: unless-stopped
         ports:
             - 8545:8545
+
+
+
+    easy-certificate:
+        image: easy-certificate:latest
+        container_name: node
+        restart: unless-stopped
+        working_dir: /app
+        ports:
+            - 3000:3000
+            - 5000:5000
+        links: 
+            - ganache_cli
+            - db
+
+
