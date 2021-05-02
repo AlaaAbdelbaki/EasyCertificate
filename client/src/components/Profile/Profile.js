@@ -13,6 +13,8 @@ import UserCard from "./UserCard";
 import WorkExp from "./WorkExp";
 // import '../../assets/demo/demo.css';
 import '../../assets/css/paper-dashboard.css';
+import { useParams } from "react-router";
+import axios from "axios";
 // import '../../assets/css/paper-dashboard.min.css';
 
 
@@ -27,9 +29,24 @@ function User() {
     const {user} = auth
     const [ready,isReady]=useState(false)
 
-
+    let { profileUrl } = useParams();
+    console.log({profileUrl})
+    const token  = useSelector(state => state.token)
+    console.log({token})    
     useEffect(() => {
-        fetch(`http://localhost:5000/user/${window.location.href.replace("http://localhost:3000/profile/", "")}`)
+       if(token) axios.get(`http://localhost:5000/user/${profileUrl}`, {
+            headers: {Authorization: token}
+        }).then(response=>{
+            console.log({response})
+            setProfile(response.data[0])
+        isReady(true)
+        })
+        .catch(err => {});
+     /*    fetch(`http://localhost:5000/user/${profileUrl}`,{ 
+            headers: new Headers({
+              'Authorization': token, 
+            }), 
+          })
     .then(res => res.json())
     .then(res => {
         console.log(res[0])
@@ -39,9 +56,9 @@ function User() {
         
         // localStorage.setItem("user", JSON.stringify(res));
     })
-    .catch(err => this.setState({ user: err }));
+    .catch(err => this.setState({ user: err })); */
    
-    }, [])
+    }, [profileUrl,token])
     
     const loaderStyle={
         position: 'fixed',

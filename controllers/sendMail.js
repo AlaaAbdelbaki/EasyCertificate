@@ -18,7 +18,7 @@ const oauth2Client = new OAuth2(
 )
 
 //send mail
-const sendEmail = (to, url, txt) => {
+const sendEmail = (to, url, txt, show=true) => {
     oauth2Client.setCredentials({
         refresh_token : MAILING_SERVICE_REFRESH_TOKEN
     })
@@ -40,7 +40,7 @@ const sendEmail = (to, url, txt) => {
         from: SENDER_EMAIL_ADDRESS,
         to : to,
         subject: "EasyCertificate",
-        html : `
+        html : show ? `
             <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
             <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the EasyCertificate website.</h2>
             <p>Congratulations! You're almost set to start using EASYCERTIFICATE✮SERVICE.
@@ -53,7 +53,12 @@ const sendEmail = (to, url, txt) => {
         
             <div>${url}</div>
             </div>
-        `
+            ` :  `
+            <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
+            <h2 style="text-align: center; text-transform: uppercase;color: teal;">${txt}</h2>
+            
+           
+    `
     }
 
     smtpTransport.sendMail(mailOptions, (err, infor)=>{

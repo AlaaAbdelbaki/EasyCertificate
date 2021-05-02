@@ -145,7 +145,7 @@ class UpdateFrom extends Component {
     }
 
     verifyProfileId(profileId) {
-
+        // eslint-disable-next-line 
         var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
 
         if (format.test(profileId)) {
