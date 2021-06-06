@@ -112,16 +112,16 @@ header ul li img{
     text-decoration-color: indigo;
 }
 .drop-nav .dropdown{
-    position: absolute;
+    position: static;
     background: #080b1a;
     width: 100%;
-    width: calc(100% + 100px);
-    top: 50px;
+    width: calc(100% + 50px);
+    top: 55px;
     display: none;
 }
 
 .drop-nav .dropdown li{
-    display: contents; 
+
     padding: 1%;
     margin: auto;
     color: indigo;
@@ -129,5 +129,11 @@ header ul li img{
 }
 
 .drop-nav:hover .dropdown{
-    display: contents;
+    display: flex;
+    /* margin: auto;
+    padding: auto; */
+    flex-direction: column;
+    justify-content: space-around;
+    background: #080b1a;
+    text-decoration-color: indigo;
 }

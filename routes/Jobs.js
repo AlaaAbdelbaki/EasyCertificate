@@ -1,10 +1,6 @@
 const router = require('express').Router();
 let Job = require('../models/Job');
-
-//Bcrypt
-const bcrypt = require('bcrypt');
 const { findById } = require('../models/Job');
-const saltRounds = 10;
 
 
 //Shows all Jobs

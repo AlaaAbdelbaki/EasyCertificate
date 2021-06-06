@@ -35,7 +35,8 @@ class User extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { user: null, allow: false };
+        // this.state = { user: null, allow: false };
+        this.state = { user: this.props.user, allow: false };
     }
 
     getUser() {
@@ -52,7 +53,7 @@ class User extends React.Component {
 
     componentDidMount() {
 
-        this.getUser();
+        // this.getUser();
     }
 
 

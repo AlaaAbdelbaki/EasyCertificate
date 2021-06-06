@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { Component } from 'react';
+import { FormCheck } from "react-bootstrap";
 // import countrySelect from "./input.select.country";
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import {
@@ -39,7 +40,7 @@ class UpdateFrom extends Component {
             this.state = {
                 // id: this.props.user._id,
                 disableBtn: false,
-                updatePwdDisabled:false,
+                updatePwdDisabled: false,
                 email: this.props.user.email,
                 password: null,
                 confirmPassword: null,
@@ -54,6 +55,8 @@ class UpdateFrom extends Component {
                 facebook: this.props.user.facebook,
                 twitter: this.props.user.twitter,
                 linkedin: this.props.user.linkedin,
+                emailNotif: this.props.user.emailNotif,
+                pushNotif: this.props.user.pushNotif,
             }
         }
 
@@ -81,7 +84,9 @@ class UpdateFrom extends Component {
                     profileId: res[0]['profileId'],
                     facebook: res[0]['facebook'],
                     twitter: res[0]['twitter'],
-                    linkedin: res[0]['linkedin']
+                    linkedin: res[0]['linkedin'],
+                    emailNotif: res[0]['emailNotif'],
+                    pushNotif: res[0]['pushNotif'],
                 });
                 // localStorage.setItem("user", JSON.stringify(res));
             })
@@ -116,6 +121,8 @@ class UpdateFrom extends Component {
         formData.append("facebook", this.state.facebook);
         formData.append("twitter", this.state.twitter);
         formData.append("linkedin", this.state.linkedin);
+        formData.append("emailNotif", this.state.emailNotif);
+        formData.append("pushNotif", this.state.pushNotif);
 
         if (this.state.disableBtn === false) {
             axios({
@@ -125,6 +132,7 @@ class UpdateFrom extends Component {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then(res => {
+                    // console.log("request itmes: "+JSON.stringify(formData))
                     if (res.status === 200) {
                         this.props.snackbarShowMessage(`Updated Successfully !`);
                     }
@@ -373,6 +381,27 @@ class UpdateFrom extends Component {
                         </Col>
                     </Row>
                     <Row>
+                        <Col sm="12">
+                            <h5>Notificaions</h5>
+                            <span htmlFor="notifs">
+                                <input type="checkbox" id="notif" style={{ marginRight: '10px' }} defaultChecked={this.state.pushNotif} onChange={(val) => {
+                                    this.setState({
+                                        pushNotif: val.target.checked,
+                                    });
+                                }} />
+                                Receive push notifications
+                            </span><br />
+                            <span htmlFor="notifs">
+                                <input type="checkbox" id="notif" style={{ marginRight: '10px' }} defaultChecked={this.state.emailNotif} onChange={(val) => {
+                                    this.setState({
+                                        emailNotif: val.target.checked,
+                                    });
+                                }} />
+                                Receive Email notifications
+                            </span>
+                        </Col>
+                    </Row>
+                    <Row>
                         <div className="update ml-auto mr-auto">
                             <Button
                                 className="btn-round"
@@ -424,22 +453,22 @@ class UpdateFrom extends Component {
                             <Input
                                 type="password"
                                 placeholder="Retype Password"
-                                onChange={event=>{
+                                onChange={event => {
                                     // console.log(event.target.value);
                                     this.setState({
                                         confirmPassword: event.target.value,
                                     })
                                 }}
                                 onBlur={event => {
-                                    if(event.target.value !== this.state.password){
+                                    if (event.target.value !== this.state.password) {
                                         this.props.snackbarShowMessage(`Passwords not matching please verify`, "error");
                                         this.setState({
-                                            updatePwdDisabled : true,
+                                            updatePwdDisabled: true,
                                         });
-                                    }else{
+                                    } else {
                                         this.props.snackbarShowMessage(`Passwords match !`, "success");
                                         this.setState({
-                                            updatePwdDisabled : false,
+                                            updatePwdDisabled: false,
                                         })
                                     }
                                 }}
@@ -447,7 +476,7 @@ class UpdateFrom extends Component {
 
                         </Col>
                     </Row>
-                    <br/>
+                    <br />
                     <Row>
                         <div className="update ml-auto mr-auto">
                             <Button
@@ -456,32 +485,32 @@ class UpdateFrom extends Component {
                                 color="success"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                   if((this.state.password === null || this.state.confirmPassword === null ) || (this.state.password === "" || this.state.confirmPassword === "" ) ){
-                                       console.log("Password: "+this.state.password);
-                                       console.log("confirm password: "+this.state.confirmPassword);
+                                    if ((this.state.password === null || this.state.confirmPassword === null) || (this.state.password === "" || this.state.confirmPassword === "")) {
+                                        console.log("Password: " + this.state.password);
+                                        console.log("confirm password: " + this.state.confirmPassword);
                                         this.props.snackbarShowMessage(`Password fields are empty please verify !`, "error");
                                         this.setState({
-                                            updatePwdDisabled : true,
+                                            updatePwdDisabled: true,
                                         });
-                                   }else{
-                                       if(this.state.password === this.state.confirmPassword){
-                                           const data =  {
-                                               "id":this.props.user._id,
-                                               "password":this.state.password
+                                    } else {
+                                        if (this.state.password === this.state.confirmPassword) {
+                                            const data = {
+                                                "id": this.props.user._id,
+                                                "password": this.state.password
                                             }
-                                           axios.post("http://localhost:5000/user/updatepwd",data)
-                                           .then(res=>{
-                                               if(res.status === 200){
-                                                this.props.snackbarShowMessage(`Password updated successfully`, "success");
-                                               }else{
-                                                this.props.snackbarShowMessage(`Error try again later !`, "error");
-                                               }
-                                           })
-                                           .catch(err=>{
-                                               console.log("axios error !: "+err);
-                                           })
-                                       }
-                                   }
+                                            axios.post("http://localhost:5000/user/updatepwd", data)
+                                                .then(res => {
+                                                    if (res.status === 200) {
+                                                        this.props.snackbarShowMessage(`Password updated successfully`, "success");
+                                                    } else {
+                                                        this.props.snackbarShowMessage(`Error try again later !`, "error");
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log("axios error !: " + err);
+                                                })
+                                        }
+                                    }
 
                                 }}>
                                 Update Password

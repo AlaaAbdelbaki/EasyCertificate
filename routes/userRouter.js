@@ -4,6 +4,7 @@ const auth = require('../middleware/auth')
 const Users  =  require('../models/userModel')
 const authAdmin = require('../middleware/authAdmin')
 var multer = require('multer');
+const Users = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 
 router.post('/register', userCtrl.register)
@@ -96,21 +97,23 @@ router.route('/:profileId').get(async (req, res) => {
     profileId: req.params.profileId
   })
     .select("-password")
-    .then(async(user) => {
+    .then(async (user) => {
       // TODO get auth user
-      const token  =  req.header("Authorization")
-       
-let auth;
-let auth_user;
-        jwt.verify(token , process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if(user)  auth = user
-        })
-        if(auth)  auth_user =  await Users. findById(auth.id).select('-password')
+      const token = req.header("Authorization")
 
-        //console.log({auth_user})
-        if(auth_user.email!==user[0].email)
-      sendEmail(user[0].email,'',`${auth_user.name} visited your profile`,false)
-      return res.json(user)})
+      let auth;
+      let auth_user;
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (user) auth = user
+      })
+      if (auth) auth_user = await Users.findById(auth.id).select('-password')
+
+      //console.log({auth_user})
+      if (auth_user.email !== user[0].email && user[0].emailNotif)
+        sendEmail(user[0].email, '', `${auth_user.name} visited your profile`, false)
+      return res.json(user)
+    })
+
     .catch(err => res.status(400).json("Error: " + err));
 });
 
@@ -131,7 +134,7 @@ router.route('/add').post((req, res) => {
 
 //Changes the password
 // /user/updatepwd
-router.route("/updatepwd").post( async (req, res) => {
+router.route("/updatepwd").post(async (req, res) => {
   console.log(req.body);
   await User.findById(req.body.id)
     .then(async user => {
@@ -180,6 +183,8 @@ router.route("/update/:id").post(upload, (req, res) => {
       user.facebook = req.body.facebook;
       user.twitter = req.body.twitter;
       user.linkedin = req.body.linkedin;
+      user.pushNotif = req.body.pushNotif;
+      user.emailNotif = req.body.emailNotif;
 
       user.save()
         .then(() => res.status(200).json("updated successfully !"))
