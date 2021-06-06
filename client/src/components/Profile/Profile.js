@@ -14,124 +14,183 @@ import WorkExp from "./WorkExp";
 // import '../../assets/demo/demo.css';
 import '../../assets/css/paper-dashboard.css';
 // import '../../assets/css/paper-dashboard.min.css';
+import axios from "axios";
+import socket from "../socket";
+import { useParams } from "react-router";
+import { withSnackbar } from "../Snackbar";
 
 
 
 
+function User(props) {
 
-
-function User() {
-
+    const socket = props.socket;
+    const users = props.users;
     const auth = useSelector(state => state.auth)
     const [profile, setProfile] = useState(null)
-    const {user} = auth
-    const [ready,isReady]=useState(false)
+    const { user } = auth
+    const [ready, isReady] = useState(false)
 
+
+    let { profileUrl } = useParams();
+    console.log({ profileUrl })
+    const token = useSelector(state => state.token)
+    console.log({ token })
 
     useEffect(() => {
-        fetch(`http://localhost:5000/user/${window.location.href.replace("http://localhost:3000/profile/", "")}`)
-    .then(res => res.json())
-    .then(res => {
-        console.log(res[0])
-        setProfile(res[0])
-        isReady(true)
-        
-        
-        // localStorage.setItem("user", JSON.stringify(res));
-    })
-    .catch(err => this.setState({ user: err }));
-   
-    }, [])
-    
-    const loaderStyle={
+
+        if (token) axios.get(`http://localhost:5000/user/${profileUrl}`, {
+            headers: { Authorization: token }
+        }).then(response => {
+            console.log({ response })
+            setProfile(response.data[0])
+            isReady(true)
+        })
+            .catch(err => { });
+        /*    fetch(`http://localhost:5000/user/${profileUrl}`,{ 
+               headers: new Headers({
+                 'Authorization': token, 
+               }), 
+             })
+       .then(res => res.json())
+       .then(res => {
+           console.log(res[0])
+           setProfile(res[0])
+           isReady(true)
+           
+           
+           // localStorage.setItem("user", JSON.stringify(res));
+       })
+       .catch(err => this.setState({ user: err })); */
+
+    }, [profileUrl, token])
+
+
+
+
+
+    const loaderStyle = {
         position: 'fixed',
-  top: '50%',
-  left: '50%'
+        top: '50%',
+        left: '50%'
     }
-    if(!ready)
-    {
-        return(<Container style={loaderStyle}><Loader type="BallTriangle" color="#00BFFF" height={80} width={80} timeout={5000} /></Container>)
+    if (!ready) {
+        return (<Container style={loaderStyle}><Loader type="BallTriangle" color="#00BFFF" height={80} width={80} timeout={5000} /></Container>)
     }
-    
-    if(user.length===0)
-    {
-        console.log("not Connected")
-        return(
-        <Fragment>
+    console.log(user.profileId)
+    console.log(profile.profileId)
+    console.log(profile.pushNotif);
+    console.log(profile.emailNotif);
 
-        <Container>
-            <br />
-            <div className="content">
-                <Row>
-                    {/* Basic user info */}
-                    <Col md="4">
-                        {profile==null ? <div></div> : <UserCard profile={profile} /> }
-                        {/* <RecentDiplomas/> */}
-                    </Col>
-                    {/* Edit Profile */}
-                    <Col md="8">
-                        <Row>
-                            <Col sm="12">
-                            {profile==null ? <div></div> : <RecentDiplomas user={profile} />}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md="6">
-                                {profile==null ? <div></div> : <WorkExp user={profile}/> } 
-                            </Col>
-                            <Col md="6">
-                            {profile==null ? <div></div> :<Projects user={profile} /> }
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-            </div>
-        </Container>
-    </Fragment>
-    )
-    }else{
-
-            return (
-                <Fragment>
-
-                    <Container>
-                        <br />
-                        <div className="content">
-                            <Row>
-                                {/* Basic user info */}
-                                <Col md="4">
-                                    {profile==null && user==null ? <div></div> : <UserCard user={user} profile={profile} /> }
-                                    {/* <RecentDiplomas/> */}
-                                </Col>
-                                {/* Edit Profile */}
-                                <Col md="8">
-                                    <Row>
-                                        <Col sm="12">
-                                           {user==null ? <div></div> : <RecentDiplomas user={user}  />}
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md="6">
-                                        {user==null ? <div></div> :<WorkExp user={user} />}
-                                        </Col>
-                                        <Col md="6">
-                                            {user==null ? <div></div> :<Projects user={user} />}
-                                        </Col>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Container>
-                </Fragment>
-
-            );
-
-        }
-
-        
-        
+    if (profile.pushNotif) {
+        if (user._id !== profile._id && user.name !== undefined && profile.name !== undefined) {
+            const notificationData = {
+                "title": "New Profile Visit !",
+                "content": user.name + " visited your profile",
+                "user": profile._id,
+                "profilePicture": user.profilePicture
             }
 
-    
+            axios.post("http://localhost:5000/notifications/add", notificationData)
+                .then((res) => {
+                    console.log("Notification saved !");
+                    for (const user of users) {
+                        console.log(user.username);
+                        if (user.username === profile.profileId) {
+                            console.log("emit visit !!");
+                            socket.emit("visit", { profile: auth.user.name, id: user.userID });
+                            // socket.emit("visit", "hello");
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.log("Notification not saved ! " + err);
+                })
+        } else {
+            socket.on("recieveNotif", (a) => {
+                console.log("received ssmth !!");
+                console.log(JSON.stringify(a.profileName.profile));
+                props.snackbarShowMessage(a.profileName.profile + " visited your profile !")
+            });
+            console.log("Notification not sent !!");
+        }
+    }
 
-export default User
+    if (user.length === 0) {
+        return (
+            <Fragment>
+                <Container>
+                    <br />
+                    <div className="content">
+                        <Row>
+                            {/* Basic user info */}
+                            <Col md="4">
+                                {profile == null ? <div></div> : <UserCard profile={profile} />}
+                                {/* <RecentDiplomas/> */}
+                            </Col>
+                            {/* Edit Profile */}
+                            <Col md="8">
+                                <Row>
+                                    <Col sm="12">
+                                        {profile == null ? <div></div> : <RecentDiplomas user={profile} />}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="6">
+                                        {profile == null ? <div></div> : <WorkExp user={profile} />}
+                                    </Col>
+                                    <Col md="6">
+                                        {profile == null ? <div></div> : <Projects user={profile} />}
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </div>
+                </Container>
+            </Fragment>
+        )
+    } else {
+        return (
+            <Fragment>
+
+                <Container>
+                    <br />
+                    <div className="content">
+                        <Row>
+                            {/* Basic user info */}
+                            <Col md="4">
+                                {profile == null && user == null ? <div></div> : <UserCard user={user} profile={profile} />}
+                                {/* <RecentDiplomas/> */}
+                            </Col>
+                            {/* Edit Profile */}
+                            <Col md="8">
+                                <Row>
+                                    <Col sm="12">
+                                        {user == null ? <div></div> : <RecentDiplomas user={user} />}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="6">
+                                        {user == null ? <div></div> : <WorkExp user={user} />}
+                                    </Col>
+                                    <Col md="6">
+                                        {user == null ? <div></div> : <Projects user={user} />}
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </div>
+                </Container>
+            </Fragment>
+
+        );
+
+    }
+
+
+
+}
+
+
+
+export default withSnackbar(User)

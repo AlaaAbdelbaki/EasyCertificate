@@ -1,0 +1,85 @@
+import React, { Component } from 'react'
+import {
+    Card,
+    CardBody,
+    CardHeader,
+    CardTitle,
+    Col, Row
+} from "reactstrap";
+import { Container } from '@material-ui/core';
+import axios from 'axios';
+
+
+var notifications = [];
+const auth = useSelector(state => state.auth)
+
+export class Notificaions extends Component {
+
+    state = {
+        notifications: null,
+    }
+    constructor(props) {
+        super(props);
+    }
+
+
+    componentDidMount() {
+        console.log("http://localhost:5000/notifications " + auth.user._id);
+        axios.get(`http://localhost:5000/notifications/${auth.user._id}`)
+            .then((res) => {
+                this.setState({
+                    notifications: res.data,
+                });
+                // notifications = res.data;
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log("Notification fetching error !\n" + err);
+            });
+    }
+
+    render() {
+        if (this.state.notifications === null && notifications.length === 0) {
+            return (<div></div>)
+        } else {
+            console.log(this.state.notifications.length);
+            return (
+                <div>
+                    <Container>
+                        <br />
+                        <Card className="card-user">
+                            <CardHeader>
+                                <CardTitle tag="h1">Notifications</CardTitle>
+                            </CardHeader>
+                            <CardBody>
+                                {/* Add form here if u wanted to add idk */}
+                                {this.state.notifications.map((notif) => (
+                                    <Row>
+                                        <Col>
+                                            <Row>
+                                                <Col sm="12">
+                                                    <h4>{notif.title}</h4>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col sm="12">
+                                                    {notif.content}
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                        <br />
+                                    </Row>
+
+                                ))}
+                                <br />
+                                {/* end form here */}
+                            </CardBody>
+                        </Card>
+                    </Container>
+                </div>
+            )
+        }
+    }
+}
+
+export default Notificaions

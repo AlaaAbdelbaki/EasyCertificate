@@ -26,6 +26,7 @@ function HeaderConfig(props) {
             </Link>
             <ul className="dropdown">
                 <li><Link to={`/profile/${user.profileId}`}> <i className="far fa-id-badge"></i> Profile</Link></li>
+                <li><Link to={{pathname:"/notifications"}}> <i className="fa fa-bell"></i> Notifications</Link></li>
                 <li><Link to="/" onClick={handleLogout}> <i className="fas fa-sign-out-alt"></i> Logout</Link></li>
             </ul>
         </li>

@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom'
 import AddCertificate from "../../components/AddCertificate"
 import DeleteCertificate from "../../components/DeleteCertificate"
@@ -20,64 +20,111 @@ import ActivationEmail from './auth/ActivationEmail'
 import Login from './auth/Login'
 import Register from './auth/Register'
 import EditUser from "./profile/EditUser"
-
+import Notifications from "../Notifications"
+import { io } from "socket.io-client";
+import socket from "../socket";
 
 
 
 
 function Body() {
-    const auth = useSelector(state => state.auth)
-    const {isLogged,isAdmin} = auth
-    return (
-        <section>
-            <div className="App">
-            <Switch>
-            <Route path="/" component={Home} exact />
-                
-                <Route path="/login" component={isLogged ? Error404 : Login} exact/>
-                <Route path="/register" component={isLogged ? Error404 : Register} exact />
+  const auth = useSelector(state => state.auth)
+  const { isLogged, isAdmin } = auth
+  var connectedUsers = [];
 
-                <Route path="/forgot_password" component={isLogged ? Error404 : ForgotPass} exact />
-                <Route path="/user/reset/:token" component={isLogged ? Error404 : ResetPass} exact />
 
-                <Route path="/user/activate/:activation_token" component={ActivationEmail} exact />
+  socket.on("connect_error", (err) => {
+    if (err.message === "invalid username") {
+      console.log("invalid username")
+    }
+  });
 
-                <Route path="/profile/:profileUrl" component={Profile}  exact/>
-                
-                <Route path="/profile/:profileUrl/update" exact>
-                    <UpdateProfile user={auth.user} />
-                  </Route>
-                
-                  <Route exact path="/view/:hash" component={ViewCertificate}></Route>
-                  <Route exact path="/view/" component={ViewCertificate}></Route>
-                  <Route path="/profile/:profileUrl/diplomas" exact component={ DiplomasList}/>
-                  <Route path="/profile/:profileUrl/projects" exact>
-                    <ProjectsList user={auth.user}/>
-                  </Route>
 
-                  <Route path="/profile/:profileUrl/jobs" exact>
-                    <JobsList user={auth.user}/>
-                  </Route>
+  socket.on("users", (users) => {
+    users.forEach((user) => {
+      user.self = user.userID === socket.id;
+      connectedUsers.push(user)
+    });
 
-                  {/*  Admin */}
-                  <Route exact path="/viewAll" component={isAdmin ? ViewAllCertificates : Error404}></Route>
-                  
-                  <Route exact path="/add">
-                    {isAdmin ? <AddCertificate user={auth.user}/>  : Error404 }
-                  
-                  </Route> 
 
-                  <Route exact path="/update/" component={isAdmin? UpdateCertificate : Error404}/>
-                  <Route exact path="/delete/" component={isAdmin ? DeleteCertificate : Error404}></Route>
-                  <Route exact path="/users" component={isAdmin ? Users : Error404}></Route>
-                  <Route path="/edit_user/:id" component={isAdmin ? EditUser : Error404} exact />
+    // put the current user first, and then sort by username
+    connectedUsers = users.sort((a, b) => {
+      if (a.self) return -1;
+      if (b.self) return 1;
+      if (a.username < b.username) return -1;
+      return a.username > b.username ? 1 : 0;
+    });
+  });
 
-                
+  useEffect(() => {
+    if (auth) {
+      var username = auth.user.profileId;
+      socket.auth = { username };
+      socket.connect();
+    }
+  }, [auth])
 
-            </Switch>
-            </div>
-        </section>
-    )
+
+  console.log(connectedUsers);
+
+  return (
+    <section>
+      <div className="App">
+        <Switch>
+          <Route path="/" component={Home} exact />
+
+          <Route path="/login" component={isLogged ? Error404 : Login} exact />
+          <Route path="/register" component={isLogged ? Error404 : Register} exact />
+
+          <Route path="/forgot_password" component={isLogged ? Error404 : ForgotPass} exact />
+          <Route path="/user/reset/:token" component={isLogged ? Error404 : ResetPass} exact />
+
+          <Route path="/user/activate/:activation_token" component={ActivationEmail} exact />
+
+          <Route path="/profile/:profileUrl" exact>
+            <Profile socket={socket} users={connectedUsers} />
+          </Route>
+
+          <Route path="/profile/:profileUrl/update" exact>
+            <UpdateProfile user={auth.user} />
+          </Route>
+
+          <Route path="/notifications" exact>
+            {isLogged
+              ? <Notifications user={auth.user}/>
+              : Error404
+            }
+          </Route>
+          <Route exact path="/view/:hash" component={ViewCertificate}></Route>
+          <Route exact path="/view/" component={ViewCertificate}></Route>
+          <Route path="/profile/:profileUrl/diplomas" exact component={DiplomasList} />
+          <Route path="/profile/:profileUrl/projects" exact>
+            <ProjectsList user={auth.user} />
+          </Route>
+
+          <Route path="/profile/:profileUrl/jobs" exact>
+            <JobsList user={auth.user} />
+          </Route>
+
+          {/*  Admin */}
+          <Route exact path="/viewAll" component={isAdmin ? ViewAllCertificates : Error404}></Route>
+
+          <Route exact path="/add">
+            {isAdmin ? <AddCertificate user={auth.user} /> : Error404}
+
+          </Route>
+
+          <Route exact path="/update/" component={isAdmin ? UpdateCertificate : Error404} />
+          <Route exact path="/delete/" component={isAdmin ? DeleteCertificate : Error404}></Route>
+          <Route exact path="/users" component={isAdmin ? Users : Error404}></Route>
+          <Route path="/edit_user/:id" component={isAdmin ? EditUser : Error404} exact />
+
+
+
+        </Switch>
+      </div>
+    </section>
+  )
 }
 
 

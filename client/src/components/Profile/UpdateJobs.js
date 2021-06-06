@@ -14,11 +14,11 @@ import { dateToEpoch, epochToDate } from '../../utils/helper';
 
 
 
-var jobs = [];
+
 
 export class UpdateJobs extends Component {
 
-
+    jobs = []
     constructor(props) {
         super(props);
         this.state = {
@@ -51,14 +51,16 @@ export class UpdateJobs extends Component {
 
 
     componentDidMount() {
-
-        if (this.props.user == null) this.getUser();
-        this.getJobs(this.props.user._id);
+        if (this.props.user == undefined) {
+            this.getUser()
+        } else {
+            console.log("getting jobs beep boop "); this.getJobs(this.props.user._id);
+        };
     }
 
 
     getJobs(id) {
-        jobs = [];
+        // this.jobs = [];
         // console.log("entered here :) hello boi");
         // console.log("http://192.168.1.17:5000/jobs/" + id)
         // console.log("http://localhost:5000/jobs/" + id)
@@ -69,10 +71,10 @@ export class UpdateJobs extends Component {
                 this.setState({
                     full: true,
                 })
-                jobs = res;
+                this.jobs = res;
                 // do not delete for some unknown reason this is what makes the code work :) :) :) 
                 // console.log("henlo :) ")
-                console.log("length is " + jobs.length());
+                console.log("length is " + this.jobs.length());
                 // do not delete for some unknown reason this is what makes the code work :) :) :) 
             })
             .catch(err => this.setState({ user: err }));
@@ -220,161 +222,167 @@ export class UpdateJobs extends Component {
                 Add Job
                             </Button>
         }
-        return (
-            <div>
+        if (this.props.user !== undefined) {
+            console.log("here user ? " + this.props.user._id);
+            return (
                 <div>
-                    <Form>
-                        <Row>
-                            <Col md="12">
-                                <FormGroup>
-                                    <label>
-                                        Job Title
-                                </label>
-                                    <Input
-                                        placeholder="Job title"
-                                        type="text"
-                                        value={this.state.title}
-                                        onChange={event => {
-                                            this.setState({
-                                                title: event.target.value,
-                                            });
-                                            // console.log("changed");
-                                        }} />
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md="12">
-                                <FormGroup>
-                                    <label>
-                                        Company
-                                </label>
-                                    <Input
-                                        placeholder="Company"
-                                        type="text"
-                                        value={this.state.company}
-                                        onChange={event => {
-                                            this.setState({
-                                                company: event.target.value,
-                                            });
-                                            // console.log("changed");
-                                        }} />
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md="12">
-                                <FormGroup>
-                                    <Row>
-                                        <Col md="6" sm="12">
-                                            <label>
-                                                Started
+                    <div>
+                        <Form>
+                            <Row>
+                                <Col md="12">
+                                    <FormGroup>
+                                        <label>
+                                            Job Title
                                     </label>
-                                            {/* <Input
-                                                placeholder="Started"
-                                                type="text"
-                                                value={this.state.started}
-
-                                                onChange={event => {
-                                                    this.setState({
-                                                        started: event.target.value,
-                                                    });
-                                                    // console.log("changed");
-                                                }} /> */}
-                                            <DatePicker
-                                                className="form-control"
-                                                selected={this.state.started}
-                                                dateFormat="dd/MM/yyyy"
-                                                showMonthYearDropdown={true}
-                                                onChange={date => {
-                                                    // console.log(date);
-                                                    // event.selected = event;
-                                                    this.setState({
-                                                        started: date,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col md="6" sm="12">
-                                            <label>
-                                                Left
+                                        <Input
+                                            placeholder="Job title"
+                                            type="text"
+                                            value={this.state.title}
+                                            onChange={event => {
+                                                this.setState({
+                                                    title: event.target.value,
+                                                });
+                                                // console.log("changed");
+                                            }} />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md="12">
+                                    <FormGroup>
+                                        <label>
+                                            Company
                                     </label>
-                                            {/* <Input
-                                                placeholder="Left"
-                                                type="text"
-                                                value={this.state.left}
-
-                                                onChange={event => {
-                                                    this.setState({
-                                                        left: event.target.value,
-                                                    });
-                                                    // console.log("changed");
-                                                }} /> */}
-                                            <DatePicker
-                                                className="form-control"
-                                                dateFormat="dd/MM/yyyy"
-                                                selected={this.state.left}
-                                                onChange={date => {
-                                                    // console.log(date.getFullYear());
-                                                    console.log(this.state.left);
-                                                    // event.selected = event;
-                                                    this.setState({
-                                                        left: date,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                    </Row>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <div className="update ml-auto mr-auto">
-                                {button}
-                            </div>
-                        </Row>
-                    </Form>
-                </div>
-                {/* <BootstrapTable keyField='id' data={jobs} columns={columns} cellEdit={ cellEditFactory({ mode: 'click' }) }/> */}
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>Job Title</th>
-                            <th>Company</th>
-                            <th>Started</th>
-                            <th>Left</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {jobs.map((job) => (
-                            <tr key={job._id}>
-                                <td>{job.title}</td>
-                                <td>{job.company}</td>
-                                <td>{"" + new Date(job.started).getDate() + "/" + (new Date(job.started).getMonth() + 1) + "/" + new Date(job.started).getFullYear()}</td>
-                                <td>{"" + new Date(job.left).getDate() + "/" + (new Date(job.left).getMonth() + 1) + "/" + new Date(job.left).getFullYear()}</td>
-                                <td><Button className="btn-round" color="primary" onClick={(e) => {
-                                    e.preventDefault();
-                                    this.setState({
-                                        jobId: job._id,
-                                        title: job.title,
-                                        company: job.company,
-                                        started: new Date(job.started),
-                                        left: new Date(job.left),
-                                        update: true,
-                                    });
-                                }}>Edit</Button></td>
-                                <td><Button className="btn-round" color="danger" onClick={(e) => {
-                                    e.preventDefault();
-                                    this.DeleteJob(job._id);
-                                }}>Delete</Button></td>
+                                        <Input
+                                            placeholder="Company"
+                                            type="text"
+                                            value={this.state.company}
+                                            onChange={event => {
+                                                this.setState({
+                                                    company: event.target.value,
+                                                });
+                                                // console.log("changed");
+                                            }} />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md="12">
+                                    <FormGroup>
+                                        <Row>
+                                            <Col md="6" sm="12">
+                                                <label>
+                                                    Started
+                                        </label>
+                                                {/* <Input
+                                                    placeholder="Started"
+                                                    type="text"
+                                                    value={this.state.started}
+    
+                                                    onChange={event => {
+                                                        this.setState({
+                                                            started: event.target.value,
+                                                        });
+                                                        // console.log("changed");
+                                                    }} /> */}
+                                                <DatePicker
+                                                    className="form-control"
+                                                    selected={this.state.started}
+                                                    dateFormat="dd/MM/yyyy"
+                                                    showMonthYearDropdown={true}
+                                                    onChange={date => {
+                                                        // console.log(date);
+                                                        // event.selected = event;
+                                                        this.setState({
+                                                            started: date,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col md="6" sm="12">
+                                                <label>
+                                                    Left
+                                        </label>
+                                                {/* <Input
+                                                    placeholder="Left"
+                                                    type="text"
+                                                    value={this.state.left}
+    
+                                                    onChange={event => {
+                                                        this.setState({
+                                                            left: event.target.value,
+                                                        });
+                                                        // console.log("changed");
+                                                    }} /> */}
+                                                <DatePicker
+                                                    className="form-control"
+                                                    dateFormat="dd/MM/yyyy"
+                                                    selected={this.state.left}
+                                                    onChange={date => {
+                                                        // console.log(date.getFullYear());
+                                                        console.log(this.state.left);
+                                                        // event.selected = event;
+                                                        this.setState({
+                                                            left: date,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <div className="update ml-auto mr-auto">
+                                    {button}
+                                </div>
+                            </Row>
+                        </Form>
+                    </div>
+                    {/* <BootstrapTable keyField='id' data={jobs} columns={columns} cellEdit={ cellEditFactory({ mode: 'click' }) }/> */}
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Started</th>
+                                <th>Left</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </div>
-        )
+                        </thead>
+                        {this.jobs.length>0 && <tbody>
+                            {console.log("hello jobs: "+this.jobs)}
+                            {this.jobs.map((job) => (
+                                <tr key={job._id}>
+                                    <td>{job.title}</td>
+                                    <td>{job.company}</td>
+                                    <td>{"" + new Date(job.started).getDate() + "/" + (new Date(job.started).getMonth() + 1) + "/" + new Date(job.started).getFullYear()}</td>
+                                    <td>{"" + new Date(job.left).getDate() + "/" + (new Date(job.left).getMonth() + 1) + "/" + new Date(job.left).getFullYear()}</td>
+                                    <td><Button className="btn-round" color="primary" onClick={(e) => {
+                                        e.preventDefault();
+                                        this.setState({
+                                            jobId: job._id,
+                                            title: job.title,
+                                            company: job.company,
+                                            started: new Date(job.started),
+                                            left: new Date(job.left),
+                                            update: true,
+                                        });
+                                    }}>Edit</Button></td>
+                                    <td><Button className="btn-round" color="danger" onClick={(e) => {
+                                        e.preventDefault();
+                                        this.DeleteJob(job._id);
+                                    }}>Delete</Button></td>
+                                </tr>
+                            ))}
+                        </tbody>}
+                    </Table>
+                </div>
+            )
+        } else {
+            return (<div></div>)
+        }
     }
 }
 
