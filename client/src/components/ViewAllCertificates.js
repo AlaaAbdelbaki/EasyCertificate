@@ -125,7 +125,7 @@ export default class ViewAllCertificates extends Component {
 
     for (let index = 0; index <= size - 1; index++) {
       let zz = await this.state.contract.methods.Certificates(index).call();
-      if(zz['isDeleted']===false)
+      if(zz['isDeleted']===false && zz['userid']===this.props.user)
       {
         zz['dateNaissance'] = epochToDate(zz['dateNaissance'])
         zz['dateRealisation'] = epochToDate(zz['dateRealisation'])

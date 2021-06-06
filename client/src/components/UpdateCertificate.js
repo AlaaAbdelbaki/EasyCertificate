@@ -38,7 +38,7 @@ export default class UpdateCertificate extends Component {
 
 
           let zz = await this.state.contract.methods.Certificates(this.state.hash).call();
-
+        console.log(zz)
           this.setState({
             nom: zz[3],
             specialite: zz[1],
@@ -82,6 +82,7 @@ export default class UpdateCertificate extends Component {
     }
 
     render() {
+        console.log(this.state)
         if(this.state.redirect){
             return(
                 <Redirect to={`/viewAll`} />

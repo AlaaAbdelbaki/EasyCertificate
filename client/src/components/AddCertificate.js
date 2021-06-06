@@ -44,7 +44,7 @@ class AddCertificate extends Component{
     componentDidMount = async () => {
         
           let data = loadBlockchainData();
-          this.setState({ account: (await data).accounts[0],web3: (await data).web3,contract: (await data).instance,userid:this.props.user._id });
+          this.setState({ account: (await data).accounts[0],web3: (await data).web3,contract: (await data).instance,userid:this.props.match.params.userid });
 
     }
 
@@ -96,6 +96,7 @@ class AddCertificate extends Component{
     }
 
     render(){
+        console.log(this.props)
         if(this.state.redirect===true){
             return(
                 <Router>

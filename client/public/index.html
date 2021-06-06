@@ -16,6 +16,36 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <script src="https://kit.fontawesome.com/6d2cb70d32.js"></script>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+      window.googletag = window.googletag || {cmd: []};
+      var adSlot1, adSlot2;
+
+      googletag.cmd.push(function() {
+        // Define ad slot 1.
+        adSlot1 = googletag
+            .defineSlot('/6355419/Travel/Europe/France',[728, 90], 'banner-ad-1')
+            .addService(googletag.pubads());
+        // Define and configure ad slot 2.
+        adSlot2 = googletag
+            .defineSlot('/6355419/Travel/Europe/France',[728, 90], 'banner-ad-2')
+            .setTargeting('test', 'privacy')
+            .addService(googletag.pubads());
+
+        adSlot3 = googletag
+            .defineSlot('/6355419/Travel/Europe/France',[728, 90], 'banner-ad-3')
+            .addService(googletag.pubads());
+        
+        adSlot4 = googletag
+            .defineSlot('/6355419/Travel/Europe/France',[728, 90], 'banner-ad-4')
+            .setTargeting('test', 'privacy')
+            .addService(googletag.pubads());
+        
+        // Enable SRA and services.
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+      });
+    </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -28,8 +58,45 @@
     <title>React App</title>
   </head>
   <body>
+    <header>
+      <center>
+      <div style="display: block;">
+        <div id="banner-ad-4" style="width: 728px; height: 90px;"></div>
+        <script>
+          googletag.cmd.push(function() {
+            // This call to display requests both ad slots with all
+            // configured targeting.
+            googletag.display(adSlot3);
+          });
+        </script>
+      </div>
+    </center>
+     
+    </header>
+   
+
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+     
+    </div>
+    
+    <footer>
+      <br>
+      <div style="display: block;">
+        <div id="banner-ad-1" style="float: left; width: 728px; height: 90px;"></div>
+        <div id="banner-ad-2" style="float: right; width: 728px; height: 90px;"></div>
+        <script>
+          googletag.cmd.push(function() {
+            // This call to display requests both ad slots with all
+            // configured targeting.
+            googletag.display(adSlot1);
+          });
+        </script>
+      </div>
+      
+      
+    </footer>
+    
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

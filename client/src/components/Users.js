@@ -95,6 +95,10 @@ function Profile() {
                                             }
                                         </td>
                                         <td>
+                                            <Link to ={`/add/${user._id}`}>
+                                            <i className="fas fa-plus-circle" title="Add Certificate"></i>
+                                            </Link>
+                                            
                                             <Link to={`/edit_user/${user._id}`}>
                                                 <i className="fas fa-edit" title="Edit"></i>
                                             </Link>

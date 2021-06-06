@@ -28,6 +28,7 @@ import socket from "../socket";
 
 
 function Body() {
+<<<<<<< Updated upstream
   const auth = useSelector(state => state.auth)
   const { isLogged, isAdmin } = auth
   var connectedUsers = [];
@@ -125,6 +126,65 @@ function Body() {
       </div>
     </section>
   )
+=======
+    const auth = useSelector(state => state.auth)
+    const {isLogged,isAdmin} = auth
+    return (
+        <section>
+            <div className="App">
+            <Switch>
+            <Route path="/" component={Home} exact />
+                
+                <Route path="/login" component={isLogged ? Error404 : Login} exact/>
+                <Route path="/register" component={isLogged ? Error404 : Register} exact />
+
+                <Route path="/forgot_password" component={isLogged ? Error404 : ForgotPass} exact />
+                <Route path="/user/reset/:token" component={isLogged ? Error404 : ResetPass} exact />
+
+                <Route path="/user/activate/:activation_token" component={ActivationEmail} exact />
+
+                <Route path="/profile/:profileUrl" component={Profile}  exact/>
+                
+                <Route path="/profile/:profileUrl/update" exact>
+                    <UpdateProfile user={auth.user} />
+                  </Route>
+                
+                  <Route exact path="/view/:hash" component={ViewCertificate}></Route>
+                  <Route exact path="/view/" component={ViewCertificate}></Route>
+                  <Route path="/profile/:profileUrl/diplomas" exact component={ DiplomasList}/>
+                  <Route path="/profile/:profileUrl/projects" exact>
+                    <ProjectsList user={auth.user}/>
+                  </Route>
+
+                  <Route path="/profile/:profileUrl/jobs" exact>
+                    <JobsList user={auth.user}/>
+                  </Route>
+
+                  {/*  Admin */}
+                  <Route exact path="/viewAll">
+                  {isAdmin ? <ViewAllCertificates user={auth.user._id} /> : Error404}
+
+                  </Route>
+                  
+                  <Route exact path="/add">
+                    {isAdmin ? <AddCertificate user={auth.user}/>  : Error404 }
+                  
+                  </Route> 
+
+                  <Route exact path="/add/:userid/" component={isAdmin? AddCertificate : Error404}/> 
+
+                  <Route exact path="/update/" component={isAdmin? UpdateCertificate : Error404}/>
+                  <Route exact path="/delete/" component={isAdmin ? DeleteCertificate : Error404}></Route>
+                  <Route exact path="/users" component={isAdmin ? Users : Error404}></Route>
+                  <Route path="/edit_user/:id" component={isAdmin ? EditUser : Error404} exact />
+
+                
+
+            </Switch>
+            </div>
+        </section>
+    )
+>>>>>>> Stashed changes
 }
 
 
