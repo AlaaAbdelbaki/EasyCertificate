@@ -153,14 +153,7 @@ class UpdateFrom extends Component {
     }
 
     verifyProfileId(profileId) {
-<<<<<<< HEAD
-        // eslint-disable-next-line 
-        var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
-=======
-
         var format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,<>\/?~]/;
->>>>>>> c04dc49f26aa66c1c606f13b1d560ba86525915c
-
         if (format.test(profileId)) {
             this.props.snackbarShowMessage(`Profile Id should not contain special characters or spaces !`, `error`);
             this.setState({

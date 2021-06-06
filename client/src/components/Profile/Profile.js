@@ -14,11 +14,9 @@ import WorkExp from "./WorkExp";
 // import '../../assets/demo/demo.css';
 import '../../assets/css/paper-dashboard.css';
 import { useParams } from "react-router";
-import axios from "axios";
 // import '../../assets/css/paper-dashboard.min.css';
 import axios from "axios";
 import socket from "../socket";
-import { useParams } from "react-router";
 import { withSnackbar } from "../Snackbar";
 
 

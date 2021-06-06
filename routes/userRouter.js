@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const userCtrl = require('../controllers/userCtrl')
 const auth = require('../middleware/auth')
-const Users  =  require('../models/userModel')
 const authAdmin = require('../middleware/authAdmin')
 var multer = require('multer');
 const Users = require('../models/userModel')
