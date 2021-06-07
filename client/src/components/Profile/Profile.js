@@ -1,30 +1,30 @@
 
 import { Container } from "@material-ui/core";
+// import '../../assets/css/paper-dashboard.min.css';
+import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { useSelector } from 'react-redux';
+import { useParams } from "react-router";
 import {
     Col, Row
 } from "reactstrap";
+// import '../../assets/demo/demo.css';
+import '../../assets/css/paper-dashboard.css';
+import { withSnackbar } from "../Snackbar";
+import socket from "../socket";
 import Projects from "./Projects";
 import RecentDiplomas from "./RecentDiplomas";
 import UserCard from "./UserCard";
 import WorkExp from "./WorkExp";
-// import '../../assets/demo/demo.css';
-import '../../assets/css/paper-dashboard.css';
-import { useParams } from "react-router";
-// import '../../assets/css/paper-dashboard.min.css';
-import axios from "axios";
-import socket from "../socket";
-import { withSnackbar } from "../Snackbar";
 
 
 
 
 function User(props) {
 
-    const socket = props.socket;
+   
     const users = props.users;
     const auth = useSelector(state => state.auth)
     const [profile, setProfile] = useState(null)
