@@ -4,26 +4,20 @@ WORKDIR /app
 
 COPY . .
 
-RUN apt update 
-
-RUN apt install vim
-
-RUN apt install build-essentials
-
-RUN npm install node-gyp
-
-RUN npm install
-
-RUN cd /app/client/
-
-RUN npm install
-
-RUN cd /app
+RUN apt update
 
 RUN npm install -g truffle
 
-EXPOSE 3000
-EXPOSE 5000
+RUN npm install
 
+WORKDIR /app/client/
+
+RUN npm install
+
+WORKDIR /app
+
+EXPOSE 3000
+
+EXPOSE 5000
 
 CMD [ "/bin/sh" , "-c" , "npm run dev" ]
