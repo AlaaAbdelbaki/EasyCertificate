@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
+import DatePicker from "react-datepicker";
 import {
     Button,
     Col, Form, FormGroup,
     Input,
     Row
 } from "reactstrap";
-import DatePicker from "react-datepicker";
 import { withSnackbar } from '../../components/Snackbar';
-import { dateToEpoch, epochToDate } from '../../utils/helper';
 
 
 
@@ -51,7 +50,7 @@ export class UpdateJobs extends Component {
 
 
     componentDidMount() {
-        if (this.props.user == undefined) {
+        if (this.props.user === undefined) {
             this.getUser()
         } else {
             console.log("getting jobs beep boop "); this.getJobs(this.props.user._id);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import AddCertificate from "../../components/AddCertificate";
@@ -11,11 +11,13 @@ import Error404 from "../../pages/Error404";
 import ForgotPass from '../body/auth/ForgotPassword';
 import ResetPass from '../body/auth/ResetPassword';
 import Home from '../Home.js';
+import Notifications from "../Notifications";
 import DiplomasList from "../Profile/DiplomasList";
 import JobsList from "../Profile/JobsList";
 import Profile from '../Profile/Profile';
 import ProjectsList from "../Profile/ProjectsList";
 import UpdateProfile from "../Profile/updateProfile";
+import socket from "../socket";
 import ActivationEmail from './auth/ActivationEmail';
 import Login from './auth/Login';
 import Register from './auth/Register';
@@ -28,6 +30,43 @@ import EditUser from "./profile/EditUser";
 function Body() {
     const auth = useSelector(state => state.auth)
     const {isLogged,isAdmin} = auth
+
+    var connectedUsers = [];
+
+
+    socket.on("connect_error", (err) => {
+      if (err.message === "invalid username") {
+        console.log("invalid username")
+      }
+    });
+  
+  
+    socket.on("users", (users) => {
+      users.forEach((user) => {
+        user.self = user.userID === socket.id;
+        connectedUsers.push(user)
+      });
+  
+  
+      // put the current user first, and then sort by username
+      connectedUsers = users.sort((a, b) => {
+        if (a.self) return -1;
+        if (b.self) return 1;
+        if (a.username < b.username) return -1;
+        return a.username > b.username ? 1 : 0;
+      });
+    });
+  
+    useEffect(() => {
+      if (auth) {
+        var username = auth.user.profileId;
+        socket.auth = { username };
+        socket.connect();
+      }
+    }, [auth])
+  
+
+    
     return (
         <section>
             <div className="App">
@@ -42,7 +81,17 @@ function Body() {
 
                 <Route path="/user/activate/:activation_token" component={ActivationEmail} exact />
 
-                <Route path="/profile/:profileUrl" component={Profile}  exact/>
+                <Route path="/profile/:profileUrl" exact>
+            <Profile socket={socket} users={connectedUsers} />
+          </Route>
+
+          <Route path="/notifications" exact>
+            {isLogged
+              ? <Notifications user={auth.user}/>
+              : Error404
+            }
+          </Route>
+
                 
                 <Route path="/profile/:profileUrl/update" exact>
                     <UpdateProfile user={auth.user} />
